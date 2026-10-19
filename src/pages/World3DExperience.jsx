@@ -354,18 +354,18 @@ export default function World3DExperience() {
     },
     {
       id: 3,
-      title: "Lời Chúc: Cửu Bảo (Sơn B)",
-      tag: "Cửu bảo",
+      title: "Lời Chúc: Boy phố(Sơn B)",
+      tag: "Boy phố",
       icon: "🛡️",
       duration: "0:10",
       src: "/videochucmungSonb.mp4",
       poster: "/images.jpg",
-      desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Cửu bảo) gửi tặng phái đẹp công ty."
+      desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Boy phố) gửi tặng phái đẹp công ty."
     },
     {
       id: 4,
-      title: "Lời Chúc: Lính (Hoàng)",
-      tag: "Lính",
+      title: "Lời Chúc:Chú Lính Chì (Hoàng)",
+      tag: "Chú Lính Chì",
       icon: "⚔️",
       duration: "0:10",
       src: "/videochucmungHoang.mp4",
@@ -3241,8 +3241,8 @@ export default function World3DExperience() {
       const pillData = [
         { name: '👑 Leader FE', color: '#BE123C' },
         { name: '🐜 Râu con kiến', color: '#9D174D' },
-        { name: '🛡️ Cửu bảo', color: '#831843' },
-        { name: '⚔️ Lính', color: '#701A75' },
+        { name: '🛡️ Boy phố', color: '#831843' },
+        { name: '⚔️ Chú Lính Chì', color: '#701A75' },
         { name: '🍳 Food Reviewer', color: '#B45309' }
       ];
 
