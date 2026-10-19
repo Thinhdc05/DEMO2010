@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext.jsx';
+import confetti from 'canvas-confetti';
+import { playPopSound } from '../utils/soundEffects.js';
 
 export default function BalloonsPage() {
   const { wishes, openedBalloons, popBalloon, setIsArchiveOpen, navigateWithFlowerTransition } = useApp();
   const canvasRef = useRef(null);
   const activeBalloonsRef = useRef([]);
 
-  // Bảng màu bóng bay Hồng ngát pastel & Champagne ngọt ngào
+  // Bảng màu bóng bay Hồng ngát pastel & Champagne ngọt ngào cho bóng lời chúc
   const sweetBalloonPalettes = [
     { main: '#F43F5E', light: '#FDA4AF', gold: '#FDE68A' },
     { main: '#FB7185', light: '#FECDD3', gold: '#FFFBEB' },
@@ -32,11 +34,14 @@ export default function BalloonsPage() {
     };
     window.addEventListener('resize', handleResize);
 
+    // 1. Bóng lời chúc thật (1 bóng = 1 lời chúc chưa mở)
     const unpopped = wishes.filter(w => !openedBalloons.has(w.id));
-    activeBalloonsRef.current = unpopped.map((wish, idx) => {
+    const wishBalloons = unpopped.map((wish, idx) => {
       const radius = Math.min(40, Math.max(28, w / 23));
       const palette = sweetBalloonPalettes[idx % sweetBalloonPalettes.length];
       return {
+        id: `wish_${wish.id}`,
+        isDecor: false,
         wish,
         radius,
         x: Math.random() * (w - radius * 3) + radius * 1.5,
@@ -49,6 +54,45 @@ export default function BalloonsPage() {
         sparkleTimer: Math.random() * 100
       };
     });
+
+    // 2. 10 bóng trắng ngọc trai & 10 bóng đen bóng (bóng đệm lãng mạn)
+    const decorBalloons = [];
+    for (let i = 0; i < 10; i++) {
+      const radius = Math.min(36, Math.max(26, w / 25));
+      decorBalloons.push({
+        id: `decor_white_${i}`,
+        isDecor: true,
+        decorColor: 'white',
+        radius,
+        x: Math.random() * (w - radius * 3) + radius * 1.5,
+        y: h + Math.random() * (h * 1.2),
+        speedY: Math.random() * 0.8 + 0.75,
+        palette: { main: '#FFFFFF', light: '#F8FAFC', base: '#E2E8F0' },
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: Math.random() * 0.02 + 0.014,
+        wobbleAmp: Math.random() * 1.2 + 0.7,
+        sparkleTimer: Math.random() * 100
+      });
+    }
+    for (let i = 0; i < 10; i++) {
+      const radius = Math.min(36, Math.max(26, w / 25));
+      decorBalloons.push({
+        id: `decor_black_${i}`,
+        isDecor: true,
+        decorColor: 'black',
+        radius,
+        x: Math.random() * (w - radius * 3) + radius * 1.5,
+        y: h + Math.random() * (h * 1.2),
+        speedY: Math.random() * 0.8 + 0.75,
+        palette: { main: '#1A1A1A', light: '#4B5563', base: '#0A0A0A' },
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: Math.random() * 0.02 + 0.014,
+        wobbleAmp: Math.random() * 1.2 + 0.7,
+        sparkleTimer: Math.random() * 100
+      });
+    }
+
+    activeBalloonsRef.current = [...wishBalloons, ...decorBalloons];
 
     let animId;
     function render() {
@@ -72,7 +116,9 @@ export default function BalloonsPage() {
         ctx.save();
 
         // 1. Dải ruy băng lụa mềm mại
-        ctx.strokeStyle = '#FDA4AF';
+        ctx.strokeStyle = b.isDecor
+          ? (b.decorColor === 'black' ? '#D4AF37' : '#E2E8F0')
+          : '#FDA4AF';
         ctx.lineWidth = 1.6;
         ctx.beginPath();
         ctx.moveTo(x, y + r);
@@ -95,43 +141,97 @@ export default function BalloonsPage() {
         ctx.closePath();
         ctx.fill();
 
-        // 4. Thân bóng hình giọt ngọc 3D lộng lẫy
-        const balloonGrad = ctx.createRadialGradient(
-          x - r * 0.35, y - r * 0.35, r * 0.1,
-          x, y, r
-        );
-        balloonGrad.addColorStop(0, '#FFFFFF');
-        balloonGrad.addColorStop(0.25, b.palette.light);
-        balloonGrad.addColorStop(0.85, b.palette.main);
-        balloonGrad.addColorStop(1, '#9F1239');
+        if (b.isDecor) {
+          if (b.decorColor === 'black') {
+            // Bóng đen bóng (Glossy Black) cực sang trọng
+            const balloonGrad = ctx.createRadialGradient(
+              x - r * 0.35, y - r * 0.35, r * 0.08,
+              x, y, r
+            );
+            balloonGrad.addColorStop(0, '#6B7280');
+            balloonGrad.addColorStop(0.2, '#374151');
+            balloonGrad.addColorStop(0.6, '#1F2937');
+            balloonGrad.addColorStop(0.9, '#111827');
+            balloonGrad.addColorStop(1, '#050505');
 
-        ctx.fillStyle = balloonGrad;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
+            ctx.fillStyle = balloonGrad;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
 
-        // 5. Viền phản quang
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
-        ctx.lineWidth = 1.8;
-        ctx.stroke();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.38)';
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
 
-        // 6. Ánh sáng phản chiếu bóng loáng (Crystal Sheen)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-        ctx.beginPath();
-        ctx.ellipse(x - r * 0.35, y - r * 0.35, r * 0.3, r * 0.15, -Math.PI / 4, 0, Math.PI * 2);
-        ctx.fill();
+            // Phản quang bóng loáng sắc nét
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.beginPath();
+            ctx.ellipse(x - r * 0.35, y - r * 0.35, r * 0.32, r * 0.16, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Bóng trắng ngọc trai (Glossy White Pearl)
+            const balloonGrad = ctx.createRadialGradient(
+              x - r * 0.35, y - r * 0.35, r * 0.08,
+              x, y, r
+            );
+            balloonGrad.addColorStop(0, '#FFFFFF');
+            balloonGrad.addColorStop(0.35, '#F8FAFC');
+            balloonGrad.addColorStop(0.85, '#E2E8F0');
+            balloonGrad.addColorStop(1, '#CBD5E1');
 
-        // 7. Tên người gửi trên bóng (hỗ trợ cả from_name, sender, name hoặc fallback an toàn)
-        ctx.font = '700 11.5px "Be Vietnam Pro", sans-serif';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 4;
+            ctx.fillStyle = balloonGrad;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
 
-        const senderRaw = (b.wish && (b.wish.from_name || b.wish.name || b.wish.sender)) || 'Tech';
-        const shortName = String(senderRaw).trim().split(' ').slice(-1)[0] || '20.10';
-        ctx.fillText(shortName, x, y + 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.ellipse(x - r * 0.35, y - r * 0.35, r * 0.32, r * 0.16, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        } else {
+          // 4. Thân bóng hình giọt ngọc 3D lộng lẫy (cho bóng lời chúc)
+          const balloonGrad = ctx.createRadialGradient(
+            x - r * 0.35, y - r * 0.35, r * 0.1,
+            x, y, r
+          );
+          balloonGrad.addColorStop(0, '#FFFFFF');
+          balloonGrad.addColorStop(0.25, b.palette.light);
+          balloonGrad.addColorStop(0.85, b.palette.main);
+          balloonGrad.addColorStop(1, '#9F1239');
+
+          ctx.fillStyle = balloonGrad;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 5. Viền phản quang
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+
+          // 6. Ánh sáng phản chiếu bóng loáng (Crystal Sheen)
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+          ctx.beginPath();
+          ctx.ellipse(x - r * 0.35, y - r * 0.35, r * 0.3, r * 0.15, -Math.PI / 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 7. Tên người gửi trên bóng (chỉ có ở bóng lời chúc)
+          ctx.font = '700 11.5px "Be Vietnam Pro", sans-serif';
+          ctx.fillStyle = '#FFFFFF';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+          ctx.shadowBlur = 4;
+
+          const senderRaw = (b.wish && (b.wish.from_name || b.wish.name || b.wish.sender)) || 'Tech';
+          const shortName = String(senderRaw).trim().split(' ').slice(-1)[0] || '20.10';
+          ctx.fillText(shortName, x, y + 2);
+        }
 
         ctx.restore();
       });
@@ -147,9 +247,9 @@ export default function BalloonsPage() {
     };
   }, [wishes]);
 
-  // Khi có lời chúc được mở từ Modal hoặc Drawer, lọc bỏ bóng tương ứng mà KHÔNG làm reset vị trí bay của các bóng khác
+  // Khi có lời chúc được mở từ Modal hoặc Drawer, lọc bỏ bóng lời chúc tương ứng mà KHÔNG xóa bóng decor
   useEffect(() => {
-    activeBalloonsRef.current = activeBalloonsRef.current.filter(b => !openedBalloons.has(b.wish.id));
+    activeBalloonsRef.current = activeBalloonsRef.current.filter(b => b.isDecor || !openedBalloons.has(b.wish?.id));
   }, [openedBalloons]);
 
   const handleCanvasClick = (e) => {
@@ -170,18 +270,37 @@ export default function BalloonsPage() {
 
       const screenX = e.clientX / window.innerWidth;
       const screenY = e.clientY / window.innerHeight;
-      popBalloon(balloon.wish, { x: screenX, y: screenY });
+
+      if (balloon.isDecor) {
+        // Bóng trắng/đen: chỉ nổ pháo giấy kim tuyến + tiếng pop, không mở modal
+        playPopSound();
+        confetti({
+          particleCount: 40,
+          spread: 70,
+          origin: { x: screenX, y: screenY },
+          colors: balloon.decorColor === 'black'
+            ? ['#262626', '#4B5563', '#D4AF37', '#FFFFFF']
+            : ['#FFFFFF', '#FDE68A', '#FDA4AF', '#FFF1F2']
+        });
+      } else {
+        popBalloon(balloon.wish, { x: screenX, y: screenY });
+      }
     }
   };
 
   const handleRandomPop = () => {
-    if (activeBalloonsRef.current.length === 0) {
-      alert('Chị em đã khám phá hết những quả bóng rồi! Cùng bước tiếp sang Chuyến Xe Thư nhé! 🌸');
+    const wishBalloons = activeBalloonsRef.current.filter(b => !b.isDecor);
+    if (wishBalloons.length === 0) {
+      alert('Chị em đã khám phá hết những lời chúc rồi! Cùng bước tiếp sang Chuyến Xe Thư nhé! 🌸');
       return;
     }
-    const randIdx = Math.floor(Math.random() * activeBalloonsRef.current.length);
-    const balloon = activeBalloonsRef.current[randIdx];
-    activeBalloonsRef.current.splice(randIdx, 1);
+    const randIdx = Math.floor(Math.random() * wishBalloons.length);
+    const balloon = wishBalloons[randIdx];
+
+    const realIdx = activeBalloonsRef.current.indexOf(balloon);
+    if (realIdx !== -1) {
+      activeBalloonsRef.current.splice(realIdx, 1);
+    }
 
     const canvas = canvasRef.current;
     const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0 };

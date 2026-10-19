@@ -3089,14 +3089,21 @@ export default function World3DExperience() {
       stringGeo.translate(0, -1.1, 0);
       const stringMat = new THREE.MeshBasicMaterial({ color: 0xFFFBEB });
 
-      // [P3] TĂNG BÓNG BAY 3D (36 bóng bay đa tầng PBR có đung đưa nhịp nhàng)
+      // [P3] BÓNG BAY 3D:
+      // 1. Số bóng lời chúc thật tương ứng với số lời chúc thực tế (ở tầng cao/tầm mắt)
+      // 2. Thêm 10 bóng trắng ngọc trai + 10 bóng đen bóng ở tầng thấp làm đệm không gian
       const balloonMeshes = [];
-      const nBalloons = 36;
       const bColorsExtended = [
         0xF43F5E, 0xFB7185, 0xFBBF24, 0xC084FC, 0xFDA4AF, 0xE11D48, 0xFFE4E6, 0x38BDF8, 0xF59E0B, 0xEC4899, 0xD946EF, 0xFFF1F2
       ];
 
-      for (let i = 0; i < nBalloons; i++) {
+      const realWishList = (wishes && wishes.length > 0) ? wishes : [
+        { id: 'fb_1', name: 'Đồng Nghiệp IT', dept: 'Engineering Team', text: 'Chúc bạn ngày 20/10 rạng rỡ, xinh đẹp và luôn đón nhận niềm vui bất ngờ trong cuộc sống!' }
+      ];
+      const nWishes = realWishList.length;
+
+      // --- PHẦN A: BÓNG LỜI CHÚC THẬT (TẦNG TRUNG & CAO) ---
+      for (let i = 0; i < nWishes; i++) {
         const isH = i % 2 === 0;
         const col = bColorsExtended[i % bColorsExtended.length];
         const bMat = new THREE.MeshPhysicalMaterial({
@@ -3113,11 +3120,11 @@ export default function World3DExperience() {
         });
         const bMesh = new THREE.Mesh(isH ? heartGeo : sphereGeo, bMat);
 
-        // Phân bổ bóng bay thành vòm cung 360 độ đa tầng
-        const angle = -2.2 + (i / (nBalloons - 1)) * 4.4;
-        const tier = i % 4; // 4 tầng độ cao
-        const rad = 2.4 + (i % 3) * 0.65 + (rand() - 0.5) * 0.35;
-        const bY = 1.1 + tier * 0.72 + Math.sin(i * 1.35) * 0.28;
+        // Vòm cung tầng cao (1.7m - 3.4m)
+        const angle = nWishes > 1 ? -2.2 + (i / (nWishes - 1)) * 4.4 : 0;
+        const tier = i % 4;
+        const rad = 2.4 + (i % 3) * 0.65 + (rand() - 0.5) * 0.3;
+        const bY = 1.7 + tier * 0.55 + Math.sin(i * 1.35) * 0.22;
         const posX = Math.sin(angle) * rad;
         const posZ = Math.cos(angle) * rad * 0.55;
 
@@ -3125,7 +3132,6 @@ export default function World3DExperience() {
         bMesh.rotation.y = (rand() - 0.5) * 0.8;
         bMesh.castShadow = true;
 
-        // Dây bóng bay rủ xuống với độ dài thích ứng theo bY
         const strLen = Math.max(1.4, bY + 0.2);
         const dynamicStrGeo = new THREE.CylinderGeometry(0.005, 0.005, strLen, 4);
         dynamicStrGeo.translate(0, -strLen / 2, 0);
@@ -3133,7 +3139,6 @@ export default function World3DExperience() {
         bMesh.add(strMesh);
         st2Group.add(bMesh);
 
-        // Dữ liệu đung đưa tự nhiên theo gió
         bMesh.userData = {
           baseX: posX,
           baseY: bY,
@@ -3146,13 +3151,7 @@ export default function World3DExperience() {
           rotAmp: 0.08 + rand() * 0.06
         };
 
-        const wishData = (wishes && wishes.length > 0)
-          ? wishes[i % wishes.length]
-          : {
-            id: `wish_${i}`, name: 'Đồng Nghiệp IT', dept: 'Engineering Team',
-            text: 'Chúc bạn ngày 20/10 rạng rỡ, xinh đẹp và luôn đón nhận niềm vui bất ngờ trong cuộc sống!'
-          };
-
+        const wishData = realWishList[i];
         interactiveMeshes.push({
           mesh: bMesh,
           onClick: () => {
@@ -3168,6 +3167,92 @@ export default function World3DExperience() {
         });
         balloonMeshes.push(bMesh);
       }
+
+      // --- PHẦN B: 10 BÓNG TRẮNG NGỌC TRAI + 10 BÓNG ĐEN BÓNG (Ở TẦNG THẤP) ---
+      const decorBalloons = [
+        ...Array.from({ length: 10 }, (_, idx) => ({ type: 'white', index: idx })),
+        ...Array.from({ length: 10 }, (_, idx) => ({ type: 'black', index: idx }))
+      ];
+
+      const whiteMat = new THREE.MeshPhysicalMaterial({
+        color: 0xFFFFFF,
+        roughness: 0.12,
+        metalness: 0.06,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.06,
+        transmission: 0.22,
+        thickness: 0.25,
+        ior: 1.48,
+        envMap: envTex,
+        envMapIntensity: 1.5
+      });
+
+      const blackMat = new THREE.MeshPhysicalMaterial({
+        color: 0x141414,
+        roughness: 0.08,
+        metalness: 0.22,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.04,
+        reflectivity: 0.95,
+        envMap: envTex,
+        envMapIntensity: 1.8
+      });
+
+      const decorGoldStrMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37 });
+
+      decorBalloons.forEach((item, dIdx) => {
+        const isBlack = item.type === 'black';
+        const isH = (item.index % 3 === 0);
+        const dMesh = new THREE.Mesh(isH ? heartGeo : sphereGeo, isBlack ? blackMat : whiteMat);
+
+        // Phân bổ đều vòm cung ở TẦNG THẤP (bY từ 0.55m đến 1.25m)
+        const angle = -2.3 + (dIdx / (decorBalloons.length - 1)) * 4.6 + (rand() - 0.5) * 0.2;
+        const rad = 2.0 + (item.index % 3) * 0.55 + (rand() - 0.5) * 0.25;
+        const bY = 0.55 + (item.index % 3) * 0.28 + Math.sin(dIdx * 1.4) * 0.12;
+        const posX = Math.sin(angle) * rad;
+        const posZ = Math.cos(angle) * rad * 0.55;
+
+        dMesh.position.set(posX, bY, posZ);
+        dMesh.rotation.y = (rand() - 0.5) * 0.8;
+        dMesh.castShadow = true;
+
+        const strLen = Math.max(0.65, bY + 0.15);
+        const dynamicStrGeo = new THREE.CylinderGeometry(0.004, 0.004, strLen, 4);
+        dynamicStrGeo.translate(0, -strLen / 2, 0);
+        const strMesh = new THREE.Mesh(dynamicStrGeo, isBlack ? decorGoldStrMat : stringMat);
+        dMesh.add(strMesh);
+        st2Group.add(dMesh);
+
+        dMesh.userData = {
+          baseX: posX,
+          baseY: bY,
+          baseZ: posZ,
+          speed: 0.75 + rand() * 0.65,
+          phase: rand() * Math.PI * 2,
+          swayAmpX: 0.06 + rand() * 0.06,
+          swayAmpY: 0.08 + rand() * 0.08,
+          swayAmpZ: 0.05 + rand() * 0.05,
+          rotAmp: 0.06 + rand() * 0.05
+        };
+
+        interactiveMeshes.push({
+          mesh: dMesh,
+          onClick: () => {
+            dMesh.visible = false;
+            playPopSound();
+            fireConfetti({
+              particleCount: 45,
+              spread: 70,
+              origin: { y: 0.5 },
+              colors: isBlack
+                ? ['#262626', '#404040', '#D4AF37', '#FFFFFF']
+                : ['#FFFFFF', '#FFFBEB', '#FDE68A', '#FDA4AF']
+            });
+            // Không mở modal, không hiện thông điệp
+          }
+        });
+        balloonMeshes.push(dMesh);
+      });
 
       scene.add(st2Group);
       worldAtmosphereRef.current.balloonMeshes = balloonMeshes;
