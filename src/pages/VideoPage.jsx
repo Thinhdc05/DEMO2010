@@ -13,7 +13,6 @@ export default function VideoPage() {
       icon: "👑",
       duration: "0:10",
       src: "/videochucmung.mp4",
-      poster: "/images.jpg",
       desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
     },
     {
@@ -23,7 +22,6 @@ export default function VideoPage() {
       icon: "🐜",
       duration: "0:10",
       src: "/videchucmungSon.mp4",
-      poster: "/images.jpg",
       desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
     },
     {
@@ -33,7 +31,6 @@ export default function VideoPage() {
       icon: "🛡️",
       duration: "0:10",
       src: "/videochucmungSonb.mp4",
-      poster: "/images.jpg",
       desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Boy phố) gửi tặng phái đẹp công ty."
     },
     {
@@ -43,7 +40,6 @@ export default function VideoPage() {
       icon: "⚔️",
       duration: "0:10",
       src: "/videochucmungHoang.mp4",
-      poster: "/images.jpg",
       desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Chú Lính Chì) gửi tặng các chị em."
     },
     {
@@ -53,8 +49,25 @@ export default function VideoPage() {
       icon: "🍳",
       duration: "0:10",
       src: "/videochucmungHuy.mp4",
-      poster: "/images.jpg",
       desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
+    },
+    {
+      id: 6,
+      title: "Lời Chúc: Bá khéo",
+      tag: "Bá khéo",
+      icon: "🎯",
+      duration: "0:10",
+      src: "/videochucmungViet.mp4",
+      desc: "Lời chúc ấm áp, khéo léo và chân thành từ Việt (Bá khéo) gửi tặng các chị em."
+    },
+    {
+      id: 7,
+      title: "Lời Chúc: Tam ca",
+      tag: "Tam ca",
+      icon: "🎶",
+      duration: "0:10",
+      src: "/videochucmung3.mp4",
+      desc: "Giai điệu đồng ca chúc mừng 20/10 ngập tràn niềm vui và gắn kết từ toàn thể anh em."
     }
   ];
 
@@ -219,7 +232,6 @@ export default function VideoPage() {
                   ref={videoRef}
                   key={activeVideo.src + selectedVideoIndex}
                   src={activeVideo.src}
-                  poster={activeVideo.poster}
                   preload="metadata"
                   controls
                   autoPlay
@@ -285,10 +297,13 @@ export default function VideoPage() {
                       onClick={() => handleSelectVideo(idx)}
                     >
                       <div className="card-thumbnail-box">
-                        <img
-                          src={video.poster}
-                          alt={video.title}
+                        <video
+                          src={`${video.src}#t=0.5`}
+                          preload="metadata"
+                          muted
+                          playsInline
                           className="card-thumbnail-img"
+                          style={{ pointerEvents: 'none' }}
                         />
                         {isActive && (
                           <div className="card-playing-badge">

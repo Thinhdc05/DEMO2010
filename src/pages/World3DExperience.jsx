@@ -339,7 +339,6 @@ export default function World3DExperience() {
       icon: "👑",
       duration: "0:10",
       src: "/videochucmung.mp4",
-      poster: "/images.jpg",
       desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
     },
     {
@@ -349,7 +348,6 @@ export default function World3DExperience() {
       icon: "🐜",
       duration: "0:10",
       src: "/videchucmungSon.mp4",
-      poster: "/images.jpg",
       desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
     },
     {
@@ -359,7 +357,6 @@ export default function World3DExperience() {
       icon: "🛡️",
       duration: "0:10",
       src: "/videochucmungSonb.mp4",
-      poster: "/images.jpg",
       desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Boy phố) gửi tặng phái đẹp công ty."
     },
     {
@@ -369,7 +366,6 @@ export default function World3DExperience() {
       icon: "⚔️",
       duration: "0:10",
       src: "/videochucmungHoang.mp4",
-      poster: "/images.jpg",
       desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Lính) gửi tặng các chị em."
     },
     {
@@ -379,8 +375,25 @@ export default function World3DExperience() {
       icon: "🍳",
       duration: "0:10",
       src: "/videochucmungHuy.mp4",
-      poster: "/images.jpg",
       desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
+    },
+    {
+      id: 6,
+      title: "Lời Chúc: Bá khéo",
+      tag: "Bá khéo",
+      icon: "🎯",
+      duration: "0:10",
+      src: "/videochucmungViet.mp4",
+      desc: "Lời chúc ấm áp, khéo léo và chân thành từ Việt (Bá khéo) gửi tặng các chị em."
+    },
+    {
+      id: 7,
+      title: "Lời Chúc: Tam ca",
+      tag: "Tam ca",
+      icon: "🎶",
+      duration: "0:10",
+      src: "/videochucmung3.mp4",
+      desc: "Giai điệu đồng ca chúc mừng 20/10 ngập tràn niềm vui và gắn kết từ toàn thể anh em."
     }
   ];
   const [selected3DVideoIndex, setSelected3DVideoIndex] = useState(0);
@@ -6667,7 +6680,6 @@ export default function World3DExperience() {
                 ref={video3DPlayerRef}
                 key={videoPlaylist[selected3DVideoIndex].src + selected3DVideoIndex}
                 src={videoPlaylist[selected3DVideoIndex].src}
-                poster={videoPlaylist[selected3DVideoIndex].poster}
                 controls
                 autoPlay
                 playsInline
@@ -6716,7 +6728,7 @@ export default function World3DExperience() {
             {/* Playlist Cards Grid */}
             <div style={{ marginTop: '16px' }}>
               <div style={{ fontSize: '0.78rem', color: 'var(--rose-400)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>
-                DANH SÁCH 5 OPTION VIDEO TRI ÂN
+                DANH SÁCH {videoPlaylist.length} OPTION VIDEO TRI ÂN
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
                 {videoPlaylist.map((v, idx) => {
@@ -6743,7 +6755,13 @@ export default function World3DExperience() {
                       }}
                     >
                       <div style={{ width: '100%', aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden', background: '#000', position: 'relative', marginBottom: '6px' }}>
-                        <img src={v.poster} alt={v.tag} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+                        <video
+                          src={`${v.src}#t=0.5`}
+                          preload="metadata"
+                          muted
+                          playsInline
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.88, pointerEvents: 'none' }}
+                        />
                         {isCur && (
                           <div style={{ position: 'absolute', top: '4px', left: '4px', background: 'var(--rose-600)', color: '#FFF', fontSize: '0.62rem', fontWeight: '800', padding: '2px 6px', borderRadius: '9999px' }}>
                             ▶ Đang phát
