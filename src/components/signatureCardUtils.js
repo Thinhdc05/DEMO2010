@@ -102,14 +102,14 @@ export function getSignatureStyleForName(name = '') {
  * Dùng làm Texture sắc nét cho Three.js (Trạm 2 và Trạm 5) và xuất ảnh.
  * Đồng bộ 100% với giao diện Thiệp Hồng Nhung: vòng tròn vàng, giàn hoa đào botanical hai bên, chữ Pinyon Script.
  */
-export function createSignatureCardCanvas(name = 'Lan Anh', customQuote = '', width = 800, height = 1060) {
+export function createSignatureCardCanvas(name = 'Bạn', customQuote = '', width = 800, height = 1060) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-  const displayName = name.replace(/^(Chị\s+|Em\s+)/i, '').trim() || 'Lan Anh';
-  const wish = customQuote || 'Chúc chị luôn vui vẻ, may mắn và hạnh phúc!';
+  const displayName = name.replace(/^(Chị\s+|Em\s+)/i, '').trim() || 'Bạn';
+  const wish = customQuote || 'Chúc bạn luôn vui vẻ, may mắn và hạnh phúc!';
 
   // 1. Nền radial gradient ấm áp phong cách Thiệp Hồng Nhung
   const bgGrad = ctx.createRadialGradient(

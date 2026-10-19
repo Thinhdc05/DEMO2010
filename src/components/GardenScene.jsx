@@ -405,7 +405,7 @@ function TributePavilion({ x, y, s, sisterName }) {
 
         {/* Tên chị em to nổi bật, sắc nét, trang trọng */}
         <text x="0" y="21" fontFamily="'Playfair Display', serif" fontSize="11" fontWeight="bold" fill="#FFFFFF" textAnchor="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.5))">
-          {sisterName || 'Chị Lan Anh'}
+          {sisterName || 'Bạn'}
         </text>
 
         {/* Dòng tri ân thanh lịch */}

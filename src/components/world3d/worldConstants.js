@@ -63,7 +63,7 @@ export const STATIONS = [
     chapter: 'Chương 5',
     chapterTitle: 'Thước Phim Thanh Xuân Rực Rỡ',
     name: 'Rạp Chiếu Điện Ảnh',
-    subtitle: 'Khán Đài Hoàng Hôn & Thước Phim Tri Ân Phái Đẹp',
+    subtitle: 'Khán Đài Hoàng Hôn & 5 Video Tri Ân ',
     icon: '🎬'
   },
   {

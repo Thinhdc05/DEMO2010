@@ -1,9 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 
 export default function VideoPage() {
-  const { navigateWithFlowerTransition } = useApp();
+  const { navigateWithFlowerTransition, setIsPlayingMusic } = useApp();
 
+  // 1. Danh sách 5 video ngắn tri ân đúng tên file và option theo yêu cầu
+  const videoPlaylist = [
+    {
+      id: 1,
+      title: "Lời Chúc: Leader FE",
+      tag: "Leader FE",
+      icon: "👑",
+      duration: "0:10",
+      src: "/videochucmung.mp4",
+      poster: "/images.jpg",
+      desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
+    },
+    {
+      id: 2,
+      title: "Lời Chúc: Râu Con Kiến (Sơn)",
+      tag: "Râu con kiến",
+      icon: "🐜",
+      duration: "0:10",
+      src: "/videchucmungSon.mp4",
+      poster: "/images.jpg",
+      desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
+    },
+    {
+      id: 3,
+      title: "Lời Chúc: Cửu Bảo (Sơn B)",
+      tag: "Cửu bảo",
+      icon: "🛡️",
+      duration: "0:10",
+      src: "/videochucmungSonb.mp4",
+      poster: "/images.jpg",
+      desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Cửu bảo) gửi tặng phái đẹp công ty."
+    },
+    {
+      id: 4,
+      title: "Lời Chúc: Lính (Hoàng)",
+      tag: "Lính",
+      icon: "⚔️",
+      duration: "0:10",
+      src: "/videochucmungHoang.mp4",
+      poster: "/images.jpg",
+      desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Lính) gửi tặng các chị em."
+    },
+    {
+      id: 5,
+      title: "Lời Chúc: Food Reviewer(Huy)",
+      tag: "Food Reviewer",
+      icon: "🍳",
+      duration: "0:10",
+      src: "/videochucmungHuy.mp4",
+      poster: "/images.jpg",
+      desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
+    }
+  ];
+
+  // 2. Danh sách quotes tri ân
   const quotes = [
     {
       category: "DÀNH TẶNG NỤ CƯỜI TỎA NẮNG",
@@ -36,18 +91,50 @@ export default function VideoPage() {
   ];
 
   const [viewMode, setViewMode] = useState('video'); // 'video' hoặc 'quotes'
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+  const [isAutoPlayNext, setIsAutoPlayNext] = useState(true);
+  const videoRef = useRef(null);
 
+  // Quotes slideshow states
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
+  const [isQuoteAutoPlay, setIsQuoteAutoPlay] = useState(true);
+
+  // Auto-slide cho tab Quotes
   useEffect(() => {
-    if (!isAutoPlay || viewMode !== 'quotes') return;
+    if (!isQuoteAutoPlay || viewMode !== 'quotes') return;
     const timer = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % quotes.length);
+      setCurrentQuoteIndex(prev => (prev + 1) % quotes.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [isAutoPlay, quotes.length, viewMode]);
+  }, [isQuoteAutoPlay, quotes.length, viewMode]);
 
-  const currentQuote = quotes[currentIndex];
+  // Khi chuyển video, tải và phát video mới
+  const handleSelectVideo = (idx) => {
+    setSelectedVideoIndex(idx);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      videoRef.current.src = videoPlaylist[idx].src;
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  // Khi hết video (10s), tự động chuyển sang tập tiếp theo nếu bật AutoPlayNext
+  const handleVideoEnded = () => {
+    if (isAutoPlayNext) {
+      const nextIndex = (selectedVideoIndex + 1) % videoPlaylist.length;
+      handleSelectVideo(nextIndex);
+    }
+  };
+
+  // Quản lý âm thanh: Tạm dừng nhạc nền khi xem video để không bị đè âm
+  const handleVideoPlay = () => {
+    if (setIsPlayingMusic) setIsPlayingMusic(false);
+  };
+
+  const activeVideo = videoPlaylist[selectedVideoIndex];
+  const currentQuote = quotes[currentQuoteIndex];
 
   return (
     <div className="page-screen" id="page-video">
@@ -57,9 +144,9 @@ export default function VideoPage() {
           <div className="cinema-eyebrow">
             SPECIAL TRIBUTE CINEMA • 20.10
           </div>
-          <h2 className="cinema-title">Thước Phim Tri Ân Từ Trái Tim</h2>
+          <h2 className="cinema-title">Rạp Chiếu Phim Tri Ân</h2>
           <p className="cinema-sub">
-            Những xúc cảm, lời trân trọng chân thành nhất được gửi gắm trong từng khung hình điện ảnh dành tặng các chị em.
+            Những xúc cảm và lời trân trọng chân thành nhất được gửi gắm trong từng thước phim ngắn dành tặng các chị em.
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '16px' }}>
@@ -74,7 +161,7 @@ export default function VideoPage() {
                 border: '1.5px solid rgba(253, 230, 138, 0.4)'
               }}
             >
-              🎬 Xem Video Tri Ân 20/10
+              🎬 Xem Video Tri Ân ({videoPlaylist.length} Video)
             </button>
             <button
               onClick={() => setViewMode('quotes')}
@@ -93,87 +180,200 @@ export default function VideoPage() {
         </div>
 
         {viewMode === 'video' ? (
-          <div className="cinema-theatre-box" style={{ padding: '16px', background: 'rgba(20, 8, 18, 0.85)' }}>
-            <div style={{ aspectRatio: '16/9', width: '100%', borderRadius: '16px', overflow: 'hidden', background: '#000' }}>
-              <video
-                src="/videochucmung.mp4"
-                controls
-                autoPlay
-                playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+          <div className="cinema-theatre-box" style={{ padding: '16px 20px 24px', background: '#FAF3EA' }}>
+            {/* Quick Option Pills ngay trên đầu Player */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '14px' }}>
+              {videoPlaylist.map((video, idx) => {
+                const isSelected = idx === selectedVideoIndex;
+                return (
+                  <button
+                    key={video.id}
+                    onClick={() => handleSelectVideo(idx)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '9999px',
+                      fontSize: '0.84rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s',
+                      background: isSelected ? 'linear-gradient(135deg, #BE123C, #8C2F4B)' : '#FFF',
+                      color: isSelected ? '#FFF' : '#334155',
+                      border: isSelected ? '1.5px solid var(--champagne-gold)' : '1px solid var(--rose-200)',
+                      boxShadow: isSelected ? '0 4px 12px rgba(190, 18, 60, 0.35)' : 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px'
+                    }}
+                  >
+                    <span>{video.icon}</span>
+                    <span>{video.tag}</span>
+                  </button>
+                );
+              })}
             </div>
-            <p style={{ textAlign: 'center', margin: '14px 0 6px', fontSize: '0.9rem', color: 'var(--champagne-gold)', fontStyle: 'italic' }}>
-              ✨ Video tri ân ngày Phụ nữ Việt Nam 20/10 dành tặng phái đẹp TechCorp
-            </p>
+
+            {/* 1. Màn Hình Rạp Chiếu Chính (Duy nhất 1 player, preload metadata để siêu mượt) */}
+            <div className="cinema-video-player-wrapper">
+              <div className="cinema-video-frame">
+                <video
+                  ref={videoRef}
+                  key={activeVideo.src + selectedVideoIndex}
+                  src={activeVideo.src}
+                  poster={activeVideo.poster}
+                  preload="metadata"
+                  controls
+                  autoPlay
+                  playsInline
+                  onPlay={handleVideoPlay}
+                  onEnded={handleVideoEnded}
+                  className="cinema-video-element"
+                />
+              </div>
+
+              {/* Thanh Thông Tin Video Đang Phát */}
+              <div className="cinema-current-video-bar">
+                <div>
+                  <div className="current-video-title">
+                    <span>{activeVideo.icon} {activeVideo.title}</span>
+                    <span style={{ fontSize: '0.75rem', background: 'var(--rose-700)', color: '#FFF', padding: '2px 8px', borderRadius: '9999px' }}>
+                      Option: {activeVideo.tag}
+                    </span>
+                  </div>
+                  <div className="current-video-desc">
+                    {activeVideo.desc}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => setIsAutoPlayNext(!isAutoPlayNext)}
+                    style={{
+                      background: isAutoPlayNext ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid ' + (isAutoPlayNext ? '#10B981' : 'rgba(255,255,255,0.2)'),
+                      color: isAutoPlayNext ? '#A7F3D0' : '#E2E8F0',
+                      borderRadius: '9999px',
+                      padding: '4px 12px',
+                      fontSize: '0.78rem',
+                      cursor: 'pointer'
+                    }}
+                    title="Tự động phát video tiếp theo khi hết 10 giây"
+                  >
+                    {isAutoPlayNext ? '✓ Tự chuyển tiếp' : 'Dừng khi hết'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Danh Sách Các Video Tri Ân (Playlist Options) */}
+            <div className="cinema-playlist-container">
+              <div className="playlist-header-row">
+                <div className="playlist-title">
+                  <span>🎞️ CHỌN VIDEO LỜI CHÚC ({videoPlaylist.length} OPTION)</span>
+                </div>
+                <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
+                  Bấm vào ô để đổi video
+                </span>
+              </div>
+
+              <div className="playlist-grid">
+                {videoPlaylist.map((video, idx) => {
+                  const isActive = idx === selectedVideoIndex;
+                  return (
+                    <div
+                      key={video.id}
+                      className={`playlist-card ${isActive ? 'active' : ''}`}
+                      onClick={() => handleSelectVideo(idx)}
+                    >
+                      <div className="card-thumbnail-box">
+                        <img
+                          src={video.poster}
+                          alt={video.title}
+                          className="card-thumbnail-img"
+                        />
+                        {isActive && (
+                          <div className="card-playing-badge">
+                            ▶ Đang chiếu
+                          </div>
+                        )}
+                        <div className="card-duration-badge">
+                          ⏱ {video.duration}
+                        </div>
+                      </div>
+
+                      <div className="card-video-name">
+                        {video.icon} {video.tag}
+                      </div>
+                      <div className="card-video-tag">
+                        {video.title}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         ) : (
-          /* Khung Chiếu Phim Sweet Rose & Champagne */
+          /* Khung Chiếu Trích Dẫn Tri Ân */
           <div className="cinema-theatre-box">
-            {/* Badge Thể Loại */}
             <div className="theatre-badge-pill">
               <span>{currentQuote.icon}</span>
               <span>{currentQuote.category}</span>
             </div>
 
-          {/* Trích Dẫn Tri Ân */}
-          <div className="theatre-quote-box">
-            <h3
-              key={currentIndex}
-              className="theatre-quote-text quote-fade-anim"
+            <div className="theatre-quote-box">
+              <h3
+                key={currentQuoteIndex}
+                className="theatre-quote-text quote-fade-anim"
+              >
+                {currentQuote.text}
+              </h3>
+            </div>
+
+            <div
+              key={`author-${currentQuoteIndex}`}
+              className="theatre-author-info quote-fade-anim"
             >
-              {currentQuote.text}
-            </h3>
+              <div className="author-name">— {currentQuote.author} —</div>
+              <div className="author-tag">✦ {currentQuote.badge} ✦</div>
+            </div>
+
+            <div className="theatre-timeline-bar">
+              {quotes.map((q, idx) => (
+                <div
+                  key={idx}
+                  className={`timeline-segment ${idx === currentQuoteIndex ? 'active' : ''}`}
+                  onClick={() => setCurrentQuoteIndex(idx)}
+                />
+              ))}
+            </div>
+
+            <div className="theatre-controls-row">
+              <button
+                onClick={() => setCurrentQuoteIndex((currentQuoteIndex - 1 + quotes.length) % quotes.length)}
+                className="btn-theatre-ctrl"
+                title="Khung hình trước"
+              >
+                ❮
+              </button>
+
+              <button
+                onClick={() => setIsQuoteAutoPlay(!isQuoteAutoPlay)}
+                className="btn-theatre-play"
+                title={isQuoteAutoPlay ? "Tạm dừng chiếu" : "Tiếp tục chiếu"}
+              >
+                {isQuoteAutoPlay ? '⏸ Tạm dừng' : '▶️ Tự động chiếu'}
+              </button>
+
+              <button
+                onClick={() => setCurrentQuoteIndex((currentQuoteIndex + 1) % quotes.length)}
+                className="btn-theatre-ctrl"
+                title="Khung hình kế tiếp"
+              >
+                ❯
+              </button>
+            </div>
           </div>
-
-          {/* Người Gửi & Chữ Ký */}
-          <div
-            key={`author-${currentIndex}`}
-            className="theatre-author-info quote-fade-anim"
-          >
-            <div className="author-name">— {currentQuote.author} —</div>
-            <div className="author-tag">✦ {currentQuote.badge} ✦</div>
-          </div>
-
-          {/* Thanh Tiến Trình Chiếu Phim */}
-          <div className="theatre-timeline-bar">
-            {quotes.map((q, idx) => (
-              <div
-                key={idx}
-                className={`timeline-segment ${idx === currentIndex ? 'active' : ''}`}
-                onClick={() => setCurrentIndex(idx)}
-              />
-            ))}
-          </div>
-
-          {/* Bộ Điều Khiển Chiếu Phim */}
-          <div className="theatre-controls-row">
-            <button
-              onClick={() => setCurrentIndex((currentIndex - 1 + quotes.length) % quotes.length)}
-              className="btn-theatre-ctrl"
-              title="Khung hình trước"
-            >
-              ❮
-            </button>
-
-            <button
-              onClick={() => setIsAutoPlay(!isAutoPlay)}
-              className="btn-theatre-play"
-              title={isAutoPlay ? "Tạm dừng chiếu" : "Tiếp tục chiếu"}
-            >
-              {isAutoPlay ? '⏸ Tạm dừng' : '▶️ Tự động chiếu'}
-            </button>
-
-            <button
-              onClick={() => setCurrentIndex((currentIndex + 1) % quotes.length)}
-              className="btn-theatre-ctrl"
-              title="Khung hình kế tiếp"
-            >
-              ❯
-            </button>
-          </div>
-        </div>
-      )}
+        )}
 
         {/* Nút Chuyển Màn Tiếp Theo */}
         <div style={{ textAlign: 'center' }}>
@@ -188,5 +388,3 @@ export default function VideoPage() {
     </div>
   );
 }
-
-

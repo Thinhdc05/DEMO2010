@@ -243,7 +243,7 @@ export default function World3DExperience() {
     setIsPlayingMusic
   } = useApp();
 
-  const sisterName = selectedSister ? selectedSister.name : 'Chị Lan Anh';
+  const sisterName = selectedSister ? selectedSister.name : 'Bạn';
 
   // [P1] Navigation & Camera states
   const [activeStationIndex, setActiveStationIndex] = useState(0);
@@ -326,6 +326,63 @@ export default function World3DExperience() {
   const [toastPaused, setToastPaused] = useState(false);
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [isDownloadingCard, setIsDownloadingCard] = useState(false);
+
+  // 5 Video Options Tri Ân 20/10
+  const videoPlaylist = [
+    {
+      id: 1,
+      title: "Lời Chúc: Leader FE",
+      tag: "Leader FE",
+      icon: "👑",
+      duration: "0:10",
+      src: "/videochucmung.mp4",
+      poster: "/images.jpg",
+      desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
+    },
+    {
+      id: 2,
+      title: "Lời Chúc: Râu Con Kiến (Sơn)",
+      tag: "Râu con kiến",
+      icon: "🐜",
+      duration: "0:10",
+      src: "/videchucmungSon.mp4",
+      poster: "/images.jpg",
+      desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
+    },
+    {
+      id: 3,
+      title: "Lời Chúc: Cửu Bảo (Sơn B)",
+      tag: "Cửu bảo",
+      icon: "🛡️",
+      duration: "0:10",
+      src: "/videochucmungSonb.mp4",
+      poster: "/images.jpg",
+      desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Cửu bảo) gửi tặng phái đẹp công ty."
+    },
+    {
+      id: 4,
+      title: "Lời Chúc: Lính (Hoàng)",
+      tag: "Lính",
+      icon: "⚔️",
+      duration: "0:10",
+      src: "/videochucmungHoang.mp4",
+      poster: "/images.jpg",
+      desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Lính) gửi tặng các chị em."
+    },
+    {
+      id: 5,
+      title: "Lời Chúc: Food Reviewer(Huy)",
+      tag: "Food Reviewer",
+      icon: "🍳",
+      duration: "0:10",
+      src: "/videochucmungHuy.mp4",
+      poster: "/images.jpg",
+      desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
+    }
+  ];
+  const [selected3DVideoIndex, setSelected3DVideoIndex] = useState(0);
+  const [is3DVideoAutoNext, setIs3DVideoAutoNext] = useState(true);
+  const video3DPlayerRef = useRef(null);
 
   // Ref tạm dừng renderLoop khi xem video để giải phóng 100% tài nguyên GPU
   const renderPausedRef = useRef(false);
@@ -2778,10 +2835,11 @@ export default function World3DExperience() {
       lG.fillText('✦ THƯ TRI ÂN TỪ CÁNH NAM IT ✦', 55, 76);
 
       // 4. Lời đề từ kính gửi (Salutation)
-      const cleanSisterName = (sisterName || 'Lan Anh').replace(/^(Chị\s+|Em\s+)/i, '').trim();
+      const cleanSisterName = (sisterName || 'Bạn').replace(/^(Chị\s+|Em\s+)/i, '').trim() || 'Bạn';
       lG.fillStyle = '#881337';
       lG.font = 'italic bold 34px "Playfair Display", Georgia, serif';
-      lG.fillText(`Thân Gửi Chị ${cleanSisterName},`, 55, 122);
+      const salutationText = cleanSisterName === 'Bạn' ? 'Thân Gửi Bạn,' : `Thân Gửi Chị ${cleanSisterName},`;
+      lG.fillText(salutationText, 55, 122);
 
       // Đường kẻ chỉ vàng trang trí
       lG.strokeStyle = 'rgba(201, 166, 107, 0.55)';
@@ -3070,17 +3128,106 @@ export default function World3DExperience() {
       screenFrame.receiveShadow = true;
 
       const scCanvas = document.createElement('canvas');
-      scCanvas.width = 640; scCanvas.height = 360;
+      scCanvas.width = 1024; scCanvas.height = 576;
       const scG = scCanvas.getContext('2d');
-      scG.fillStyle = '#1A0814'; scG.fillRect(0, 0, 640, 360);
-      scG.strokeStyle = '#C9A66B'; scG.lineWidth = 6; scG.strokeRect(12, 12, 616, 336);
-      scG.fillStyle = '#FDA4AF'; scG.font = 'bold 22px monospace';
+
+      // Gradient background
+      const bgGrad = scG.createLinearGradient(0, 0, 0, 576);
+      bgGrad.addColorStop(0, '#260B1E');
+      bgGrad.addColorStop(0.5, '#150610');
+      bgGrad.addColorStop(1, '#0C0309');
+      scG.fillStyle = bgGrad;
+      scG.fillRect(0, 0, 1024, 576);
+
+      // Gold ornate border
+      scG.strokeStyle = '#D4AF37';
+      scG.lineWidth = 8;
+      scG.strokeRect(18, 18, 988, 540);
+      scG.strokeStyle = 'rgba(253, 230, 138, 0.4)';
+      scG.lineWidth = 2;
+      scG.strokeRect(28, 28, 968, 520);
+
+      // Top Tag
+      scG.fillStyle = '#FDA4AF';
+      scG.font = 'bold 24px monospace';
       scG.textAlign = 'center';
-      scG.fillText('🎬 TECHCORP CINEMA • 20/10 SPECIAL', 320, 80);
-      scG.fillStyle = '#FFF'; scG.font = 'italic bold 36px "Playfair Display", Georgia, serif';
-      scG.fillText('Thước Phim Tri Ân Phái Đẹp', 320, 160);
-      scG.fillStyle = '#FDE68A'; scG.font = '600 24px "Be Vietnam Pro", sans-serif';
-      scG.fillText('▶ Chạm vào màn hình để thưởng thức phim', 320, 240);
+      scG.fillText('🎬 TECHCORP ROYAL CINEMA • 20/10 SPECIAL', 512, 75);
+
+      // Title
+      scG.fillStyle = '#FAF3EA';
+      scG.font = 'italic bold 44px "Playfair Display", Georgia, serif';
+      scG.fillText('Tuyển Tập 5 Thước Phim Tri Ân Phái Đẹp', 512, 140);
+
+      // Subtitle
+      scG.fillStyle = '#FDE68A';
+      scG.font = '600 22px "Be Vietnam Pro", sans-serif';
+      scG.fillText('Các clip tri ân chân thành từ tập thể anh em công ty:', 512, 185);
+
+      // 5 Video Options Pills on 3D canvas
+      const pillData = [
+        { name: '👑 Leader FE', color: '#BE123C' },
+        { name: '🐜 Râu con kiến', color: '#9D174D' },
+        { name: '🛡️ Cửu bảo', color: '#831843' },
+        { name: '⚔️ Lính', color: '#701A75' },
+        { name: '🍳 Food Reviewer', color: '#B45309' }
+      ];
+
+      // Draw Row 1: 3 pills
+      const row1 = pillData.slice(0, 3);
+      const r1W = 190, r1H = 50, r1Gap = 20;
+      const startX1 = 512 - ((3 * r1W + 2 * r1Gap) / 2);
+      row1.forEach((p, i) => {
+        const px = startX1 + i * (r1W + r1Gap);
+        const py = 225;
+        scG.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        scG.strokeStyle = '#C9A66B';
+        scG.lineWidth = 2;
+        scG.beginPath();
+        scG.roundRect(px, py, r1W, r1H, 25);
+        scG.fill();
+        scG.stroke();
+
+        scG.fillStyle = '#FFF';
+        scG.font = 'bold 20px "Be Vietnam Pro", sans-serif';
+        scG.fillText(p.name, px + r1W / 2, py + 32);
+      });
+
+      // Draw Row 2: 2 pills
+      const row2 = pillData.slice(3, 5);
+      const r2W = 190, r2H = 50, r2Gap = 20;
+      const startX2 = 512 - ((2 * r2W + 1 * r2Gap) / 2);
+      row2.forEach((p, i) => {
+        const px = startX2 + i * (r2W + r2Gap);
+        const py = 295;
+        scG.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        scG.strokeStyle = '#C9A66B';
+        scG.lineWidth = 2;
+        scG.beginPath();
+        scG.roundRect(px, py, r2W, r2H, 25);
+        scG.fill();
+        scG.stroke();
+
+        scG.fillStyle = '#FFF';
+        scG.font = 'bold 20px "Be Vietnam Pro", sans-serif';
+        scG.fillText(p.name, px + r2W / 2, py + 32);
+      });
+
+      // Center Big Call To Action Button
+      scG.fillStyle = '#BE123C';
+      scG.strokeStyle = '#FDE68A';
+      scG.lineWidth = 3;
+      scG.beginPath();
+      scG.roundRect(512 - 280, 400, 560, 68, 34);
+      scG.fill();
+      scG.stroke();
+
+      scG.fillStyle = '#FFFFFF';
+      scG.font = 'bold 26px "Be Vietnam Pro", sans-serif';
+      scG.fillText('▶ CHẠM ĐỂ MỞ PHÒNG CHIẾU 5 VIDEO', 512, 442);
+
+      scG.fillStyle = 'rgba(254, 243, 199, 0.85)';
+      scG.font = '17px "Be Vietnam Pro", sans-serif';
+      scG.fillText('(Hỗ trợ chuyển tập tự động & phát âm thanh HD)', 512, 505);
 
       const scTex = new THREE.CanvasTexture(scCanvas);
       scTex.colorSpace = THREE.SRGBColorSpace;
@@ -3092,6 +3239,32 @@ export default function World3DExperience() {
       screenFrame.add(screenMesh);
       st4Group.add(screenFrame);
 
+      // Marquee 3D Sign above cinema frame
+      const signCanvas = document.createElement('canvas');
+      signCanvas.width = 512; signCanvas.height = 120;
+      const signG = signCanvas.getContext('2d');
+      signG.fillStyle = '#1E0F18';
+      signG.fillRect(0, 0, 512, 120);
+      signG.strokeStyle = '#D4AF37';
+      signG.lineWidth = 5;
+      signG.strokeRect(6, 6, 500, 108);
+      signG.fillStyle = '#FDE68A';
+      signG.font = 'bold 26px "Playfair Display", Georgia, serif';
+      signG.textAlign = 'center';
+      signG.fillText('✨ RẠP CHIẾU 5 VIDEO TRI ÂN ✨', 256, 52);
+      signG.fillStyle = '#FDA4AF';
+      signG.font = 'bold 18px monospace';
+      signG.fillText('TECHCORP GALA • 20.10', 256, 90);
+
+      const signTex = new THREE.CanvasTexture(signCanvas);
+      signTex.colorSpace = THREE.SRGBColorSpace;
+      const signMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(4.2, 1.0),
+        new THREE.MeshBasicMaterial({ map: signTex })
+      );
+      signMesh.position.set(0, 4.85, 0.15);
+      st4Group.add(signMesh);
+
       for (let f = 0; f < 12; f++) {
         const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), new THREE.MeshBasicMaterial({ color: 0xFDE68A }));
         const bx = -3.2 + (f / 11) * 6.4;
@@ -3101,12 +3274,22 @@ export default function World3DExperience() {
 
       scene.add(st4Group);
 
+      const openCinemaModal = () => {
+        setActiveVideoModal(true);
+        showToast('🎬 Mở phòng chiếu 5 video tri ân 20/10!');
+      };
+
       interactiveMeshes.push({
         mesh: screenMesh,
-        onClick: () => {
-          setActiveVideoModal(true);
-          showToast('🎬 Mở phòng chiếu video tri ân 20/10!');
-        }
+        onClick: openCinemaModal
+      });
+      interactiveMeshes.push({
+        mesh: signMesh,
+        onClick: openCinemaModal
+      });
+      interactiveMeshes.push({
+        mesh: screenFrame,
+        onClick: openCinemaModal
       });
 
       stationCameraPositions[4] = {
@@ -5974,8 +6157,67 @@ export default function World3DExperience() {
               </button>
             )}
 
+            {/* 2b. THANH CHỌN 5 VIDEO TRI ÂN (CHỈ HIỆN KHI Ở TRẠM 4 - RẠP CHIẾU) */}
+            {activeStationIndex === 4 && (
+              <div className="hud-van-angles-dock" style={{ flexWrap: 'wrap', justifyContent: 'center', gap: '8px', maxWidth: '780px' }}>
+                <span className="van-angle-title" style={{ color: '#FDA4AF', fontWeight: '700' }}>🎬 Chọn Video Tri Ân:</span>
+                {videoPlaylist.map((v, idx) => {
+                  const isCur = idx === selected3DVideoIndex;
+                  return (
+                    <button
+                      key={v.id}
+                      className={`btn-van-angle ${isCur ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelected3DVideoIndex(idx);
+                        if (video3DPlayerRef.current) {
+                          video3DPlayerRef.current.src = v.src;
+                          video3DPlayerRef.current.load();
+                          video3DPlayerRef.current.play().catch(() => {});
+                        }
+                        setActiveVideoModal(true);
+                      }}
+                      title={v.title}
+                      style={{
+                        background: isCur ? 'linear-gradient(135deg, #BE123C, #8C2F4B)' : 'rgba(255,255,255,0.08)',
+                        color: isCur ? '#FFF' : '#E2E8F0',
+                        border: isCur ? '1.5px solid var(--champagne-gold)' : '1px solid rgba(201,166,107,0.3)',
+                        fontWeight: '700',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>{v.icon}</span>
+                      <span>{v.tag}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             {/* 3. NÚT CHUYỂN CHẶNG THEO KỊCH BẢN (LUÔN CĂN GIỮA DƯỚI CÙNG) */}
             <div className="hud-bottom-action-row">
+              {activeStationIndex === 4 && (
+                <button
+                  onClick={() => setActiveVideoModal(true)}
+                  className="btn-rose pulse-guide-attention"
+                  style={{
+                    background: 'linear-gradient(135deg, #BE123C, #8C2F4B)',
+                    color: '#FFF',
+                    fontWeight: '800',
+                    border: '1.5px solid var(--champagne-gold)',
+                    boxShadow: '0 0 22px rgba(190, 18, 60, 0.7)',
+                    padding: '12px 28px',
+                    fontSize: '0.96rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <span>🎬 Mở Rạp Chiếu 5 Video Tri Ân</span>
+                  <span style={{ background: '#FDA4AF', color: '#881337', borderRadius: '9999px', fontSize: '0.72rem', padding: '2px 8px', fontWeight: '800' }}>5 Clips</span>
+                </button>
+              )}
               {activeStationIndex === 5 && (
                 <button
                   onClick={() => setActivePartyCardModal(true)}
@@ -6147,26 +6389,175 @@ export default function World3DExperience() {
 
       {activeVideoModal && (
         <div className="modal-overlay open" onClick={() => setActiveVideoModal(false)}>
-          <div className="cinema-stage-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '860px', width: '100%', padding: '28px', position: 'relative' }}>
+          <div
+            className="cinema-stage-box"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '880px',
+              width: '100%',
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              padding: '24px 22px 28px',
+              position: 'relative'
+            }}
+          >
             <div className="modal-wax-seal-badge">20.10</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem', color: 'var(--rose-900)', margin: 0 }}>
-                🎬 Phim Tri Ân 20/10 • Phái Đẹp TechCorp
-              </h3>
+
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(201,166,107,0.25)', paddingBottom: '12px' }}>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#FDA4AF', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'var(--font-mono)' }}>
+                  TRẠM 4 • RẠP CHIẾU PHIM TRI ÂN 3D
+                </span>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem', color: 'var(--champagne-light)', margin: '4px 0 0', fontStyle: 'italic' }}>
+                  🎬 Thước Phim Tri Ân ({videoPlaylist.length} Video Clip)
+                </h3>
+              </div>
               <button onClick={() => setActiveVideoModal(false)} className="royal-btn-close" style={{ position: 'static' }}>
                 ✕
               </button>
             </div>
-            <div className="cinema-screen-viewport" style={{ aspectRatio: '16/9', width: '100%', borderRadius: '20px', overflow: 'hidden', background: '#000' }}>
+
+            {/* Quick Option Pills */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '14px' }}>
+              {videoPlaylist.map((v, idx) => {
+                const isSelected = idx === selected3DVideoIndex;
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => {
+                      setSelected3DVideoIndex(idx);
+                      if (video3DPlayerRef.current) {
+                        video3DPlayerRef.current.src = v.src;
+                        video3DPlayerRef.current.load();
+                        video3DPlayerRef.current.play().catch(() => {});
+                      }
+                    }}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '9999px',
+                      fontSize: '0.84rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s',
+                      background: isSelected ? 'linear-gradient(135deg, #BE123C, #8C2F4B)' : 'rgba(255,255,255,0.08)',
+                      color: isSelected ? '#FFF' : '#E2E8F0',
+                      border: isSelected ? '1.5px solid var(--champagne-gold)' : '1px solid rgba(201,166,107,0.3)',
+                      boxShadow: isSelected ? '0 4px 14px rgba(190, 18, 60, 0.45)' : 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px'
+                    }}
+                  >
+                    <span>{v.icon}</span>
+                    <span>{v.tag}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Cinema Screen Viewport */}
+            <div className="cinema-screen-viewport" style={{ aspectRatio: '16/9', width: '100%', borderRadius: '18px', overflow: 'hidden', background: '#000', border: '1.5px solid var(--champagne-gold)', boxShadow: '0 12px 35px rgba(0,0,0,0.6)' }}>
               <video
-                key={activeVideoModal ? 'open' : 'closed'}
-                src="/videochucmung.mp4"
+                ref={video3DPlayerRef}
+                key={videoPlaylist[selected3DVideoIndex].src + selected3DVideoIndex}
+                src={videoPlaylist[selected3DVideoIndex].src}
+                poster={videoPlaylist[selected3DVideoIndex].poster}
                 controls
                 autoPlay
                 playsInline
                 preload="metadata"
+                onEnded={() => {
+                  if (is3DVideoAutoNext) {
+                    const nextIdx = (selected3DVideoIndex + 1) % videoPlaylist.length;
+                    setSelected3DVideoIndex(nextIdx);
+                    if (video3DPlayerRef.current) {
+                      video3DPlayerRef.current.src = videoPlaylist[nextIdx].src;
+                      video3DPlayerRef.current.load();
+                      video3DPlayerRef.current.play().catch(() => {});
+                    }
+                  }
+                }}
                 style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }}
               />
+            </div>
+
+            {/* Video Info & Auto-Next Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'rgba(0,0,0,0.35)', borderRadius: '12px', marginTop: '10px', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', color: 'var(--champagne-light)', fontWeight: '700' }}>
+                  {videoPlaylist[selected3DVideoIndex].icon} {videoPlaylist[selected3DVideoIndex].title}
+                </div>
+                <div style={{ fontSize: '0.82rem', color: '#CBD5E1', marginTop: '2px' }}>
+                  {videoPlaylist[selected3DVideoIndex].desc}
+                </div>
+              </div>
+              <button
+                onClick={() => setIs3DVideoAutoNext(!is3DVideoAutoNext)}
+                style={{
+                  background: is3DVideoAutoNext ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255,255,255,0.08)',
+                  border: '1px solid ' + (is3DVideoAutoNext ? '#10B981' : 'rgba(255,255,255,0.2)'),
+                  color: is3DVideoAutoNext ? '#A7F3D0' : '#CBD5E1',
+                  borderRadius: '9999px',
+                  padding: '5px 12px',
+                  fontSize: '0.78rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {is3DVideoAutoNext ? '✓ Tự chuyển tiếp' : 'Dừng khi hết clip'}
+              </button>
+            </div>
+
+            {/* Playlist Cards Grid */}
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--rose-400)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>
+                DANH SÁCH 5 OPTION VIDEO TRI ÂN
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+                {videoPlaylist.map((v, idx) => {
+                  const isCur = idx === selected3DVideoIndex;
+                  return (
+                    <div
+                      key={v.id}
+                      onClick={() => {
+                        setSelected3DVideoIndex(idx);
+                        if (video3DPlayerRef.current) {
+                          video3DPlayerRef.current.src = v.src;
+                          video3DPlayerRef.current.load();
+                          video3DPlayerRef.current.play().catch(() => {});
+                        }
+                      }}
+                      style={{
+                        background: isCur ? 'rgba(190, 18, 60, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                        border: isCur ? '1.5px solid var(--rose-500)' : '1px solid rgba(201,166,107,0.2)',
+                        borderRadius: '14px',
+                        padding: '8px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      <div style={{ width: '100%', aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden', background: '#000', position: 'relative', marginBottom: '6px' }}>
+                        <img src={v.poster} alt={v.tag} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+                        {isCur && (
+                          <div style={{ position: 'absolute', top: '4px', left: '4px', background: 'var(--rose-600)', color: '#FFF', fontSize: '0.62rem', fontWeight: '800', padding: '2px 6px', borderRadius: '9999px' }}>
+                            ▶ Đang phát
+                          </div>
+                        )}
+                        <div style={{ position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.7)', color: '#FFF', fontSize: '0.62rem', padding: '1px 5px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>
+                          {v.duration}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.86rem', fontWeight: '700', color: isCur ? 'var(--champagne-light)' : '#E2E8F0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {v.icon} {v.tag}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#94A3B8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {v.title}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

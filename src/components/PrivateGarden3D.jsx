@@ -322,7 +322,7 @@ function makeHeartGeometry(depth = 0.2, bevel = 0.07) {
 /* ------------------------------------------------------------------ */
 function PrivateGarden3D() {
   const { selectedSister, navigateWithFlowerTransition, updateExperienceMode } = useApp();
-  const sisterName = selectedSister ? selectedSister.name : 'Chị Lan Anh';
+  const sisterName = selectedSister ? selectedSister.name : 'Bạn';
 
   const containerRef = useRef(null);
   const controlsRef = useRef(null);

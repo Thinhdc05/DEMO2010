@@ -11,8 +11,8 @@ export default function LetterPage() {
   const [imageError, setImageError] = useState(false);
 
   // Thông tin chị em được vinh danh (ưu tiên dữ liệu từ context)
-  const sisterName = selectedSister ? selectedSister.name : 'Nguyễn Thị Lan Anh';
-  const roleText = (selectedSister && (selectedSister.role || selectedSister.dept)) || 'PRODUCT MANAGER';
+  const sisterName = selectedSister ? selectedSister.name : 'Bạn';
+  const roleText = (selectedSister && (selectedSister.role || selectedSister.dept)) || 'PHÁI ĐẸP TECHCORP';
   
   // Kiểm tra ảnh chân dung: Nếu có ảnh & consent & không lỗi -> dùng ảnh thật; Nếu thiếu -> fallback thẻ chữ ký nghệ thuật!
   const hasExplicitPhoto = Boolean(selectedSister && selectedSister.photo && selectedSister.has_consent !== false);

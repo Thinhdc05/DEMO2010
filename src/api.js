@@ -163,7 +163,7 @@ export async function fetchPrivateWishes(id, nameOrPin) {
 
   const fallbackName = overrideName 
     || (foundSister ? foundSister.name : null)
-    || (cleanId === 'lan_anh' ? 'Chị Lan Anh' : 'Bạn');
+    || 'Bạn';
 
   if (!APPS_SCRIPT_URL) {
     // Lấy lời chúc riêng theo recipientId từ privateWishes.json
