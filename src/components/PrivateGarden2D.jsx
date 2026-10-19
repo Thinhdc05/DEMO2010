@@ -11,7 +11,7 @@ import './garden-scene.css';
    ========================================================== */
 export default function PrivateGarden2D() {
   const { selectedSister, navigateWithFlowerTransition, experienceMode, updateExperienceMode } = useApp();
-  const sisterName = selectedSister ? selectedSister.name : 'Chị Lan Anh';
+  const sisterName = selectedSister ? selectedSister.name : 'Chị Em Thân Thương';
 
   const [messages, setMessages] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -23,8 +23,9 @@ export default function PrivateGarden2D() {
   // Tải danh sách thư riêng cá nhân hóa
   useEffect(() => {
     async function loadPrivate() {
-      const sisterId = selectedSister ? selectedSister.id : 'lan_anh';
-      const res = await fetchPrivateWishes(sisterId);
+      const sisterId = selectedSister ? selectedSister.id : '';
+      const sisterNameParam = selectedSister ? selectedSister.name : '';
+      const res = await fetchPrivateWishes(sisterId, sisterNameParam);
       if (res.success && Array.isArray(res.data)) {
         setMessages(res.data);
       }

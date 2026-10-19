@@ -368,8 +368,9 @@ export default function World3DExperience() {
   // [P1] Load private wishes
   useEffect(() => {
     async function loadPrivate() {
-      const sisterId = selectedSister ? selectedSister.id : 'lan_anh';
-      const res = await fetchPrivateWishes(sisterId);
+      const sisterId = selectedSister ? selectedSister.id : '';
+      const sisterNameParam = selectedSister ? selectedSister.name : '';
+      const res = await fetchPrivateWishes(sisterId, sisterNameParam);
       if (res.success && Array.isArray(res.data)) {
         setMessages(res.data);
       }

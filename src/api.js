@@ -150,44 +150,50 @@ export async function fetchPublicWishes() {
 /**
  * 4. Lấy lời nhắn riêng tư (Không cần mã PIN)
  */
-export async function fetchPrivateWishes(id) {
-  const cleanId = String(id || 'lan_anh').trim().toLowerCase();
-  const matchedSister = sistersData.find(s => s.id === cleanId) || {
-    name: "Chị Lan Anh",
-    dept: "Quality Assurance",
-    role: "QA Lead"
-  };
-  const displayName = matchedSister.name;
+export async function fetchPrivateWishes(id, nameOrPin) {
+  const cleanId = String(id || '').trim().toLowerCase();
+  const overrideName = (typeof nameOrPin === 'string' && !/^\d+$/.test(nameOrPin.trim())) 
+    ? nameOrPin.trim() 
+    : '';
+
+  // 1. Tìm tên chị em trong cache hoặc file fallback
+  const cachedPeople = getCache("tribute_people_cache") || [];
+  const foundSister = (cleanId ? cachedPeople.find(p => String(p.id).toLowerCase() === cleanId) : null) 
+    || (cleanId ? sistersData.find(s => s.id === cleanId) : null);
+
+  const fallbackName = overrideName 
+    || (foundSister ? foundSister.name : null)
+    || (cleanId === 'lan_anh' ? 'Chị Lan Anh' : 'Bạn');
 
   if (!APPS_SCRIPT_URL) {
     // Lấy lời chúc riêng theo recipientId từ privateWishes.json
-    const sisterWishes = privateWishesData.filter(w => w.recipientId === cleanId);
+    const sisterWishes = cleanId ? privateWishesData.filter(w => w.recipientId === cleanId) : [];
     if (sisterWishes.length > 0) {
       return {
         success: true,
-        recipient_name: displayName,
+        recipient_name: fallbackName,
         data: sisterWishes
       };
     }
 
-    // Nếu chị chưa có lời chúc riêng cụ thể trong file, tự sinh thư chúc ấm áp cá nhân hóa
+    // Nếu chị chưa có lời chúc riêng cụ thể trong file, tự sinh thư chúc ấm áp cá nhân hóa theo đúng tên
     return {
       success: true,
-      recipient_name: displayName,
+      recipient_name: fallbackName,
       data: [
         {
           id: 1,
           type: "winged_letter",
           badge: "🕊️ Cánh Thư Tri Ân",
-          from_name: "Anh em trong team",
-          text: `Cảm ơn ${displayName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc bạn một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
+          from_name: "Anh em trong công ty",
+          text: `Cảm ơn ${fallbackName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc ${fallbackName} một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
         },
         {
           id: 2,
           type: "heart",
           badge: "💖 Trái Tim Đồng Đội",
           from_name: "Một người đồng nghiệp giấu tên",
-          text: `Chúc ${displayName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
+          text: `Chúc ${fallbackName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
         }
       ]
     };
@@ -200,39 +206,46 @@ export async function fetchPrivateWishes(id) {
     if (data.success && Array.isArray(data.data) && data.data.length > 0) {
       return data;
     }
-    // Nếu chưa có lời chúc riêng gửi đích danh trong sheet, tự động sinh thư chúc ấm áp
+
+    // Lấy tên chuẩn xác: ưu tiên tên trả về từ sheet people (data.recipient_name), sau đó là fallbackName
+    const realName = (data && data.recipient_name && data.recipient_name !== "Chị") 
+      ? data.recipient_name 
+      : fallbackName;
+
+    // Nếu chưa có lời chúc riêng gửi đích danh trong sheet, tự động sinh thư chúc ấm áp theo đúng tên người nhận
     return {
       success: true,
-      recipient_name: (data && data.recipient_name) || displayName,
+      recipient_name: realName,
       data: [
         {
           id: 1,
           type: "winged_letter",
           badge: "🕊️ Cánh Thư Tri Ân",
-          from_name: "Anh em trong team FE",
-          text: `Cảm ơn ${displayName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc bạn một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
+          from_name: "Anh em trong công ty",
+          text: `Cảm ơn ${realName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc ${realName} một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
         },
         {
           id: 2,
           type: "heart",
           badge: "💖 Trái Tim Đồng Đội",
-          from_name: "Em Intern siêu đẹp trai",
-          text: `Chúc ${displayName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
+          from_name: "Đồng nghiệp thân thiết",
+          text: `Chúc ${realName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
         }
       ]
     };
   } catch (err) {
     console.error("[API] fetchPrivateWishes error:", err);
+    const realName = fallbackName;
     return {
       success: true,
-      recipient_name: displayName,
+      recipient_name: realName,
       data: [
         {
           id: 1,
           type: "winged_letter",
           badge: "🕊️ Cánh Thư Tri Ân",
           from_name: "Đồng nghiệp thân thiết",
-          text: `Chúc ${displayName} một ngày 20/10 ngập tràn niềm vui, công việc thuận buồm xuôi gió và luôn tươi cười hạnh phúc!`
+          text: `Chúc ${realName} một ngày 20/10 ngập tràn niềm vui, công việc thuận buồm xuôi gió và luôn tươi cười hạnh phúc!`
         }
       ]
     };

@@ -348,8 +348,9 @@ function PrivateGarden3D() {
   // 1. Tải danh sách thư riêng
   useEffect(() => {
     async function loadPrivate() {
-      const sisterId = selectedSister ? selectedSister.id : 'lan_anh';
-      const res = await fetchPrivateWishes(sisterId, '2010');
+      const sisterId = selectedSister ? selectedSister.id : '';
+      const sisterNameParam = selectedSister ? selectedSister.name : '';
+      const res = await fetchPrivateWishes(sisterId, sisterNameParam);
       if (res.success && Array.isArray(res.data)) {
         setMessages(res.data);
       }
