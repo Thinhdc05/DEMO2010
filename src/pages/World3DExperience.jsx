@@ -252,6 +252,9 @@ export default function World3DExperience() {
   const selectedVehicleRef = useRef('van');
   const royalCarriageRef = useRef(null);
   const [isLookingAtSky, setIsLookingAtSky] = useState(false);
+  const [hasCastleFireworksFired, setHasCastleFireworksFired] = useState(false);
+  const [isFireworksReplaying, setIsFireworksReplaying] = useState(false);
+  const replayFireworksTimerRef = useRef(null);
   const [isNavPadOpen, setIsNavPadOpen] = useState(false);
   const navMoveIntervalRef = useRef(null);
   const autoRotateRef = useRef(false);
@@ -732,7 +735,11 @@ export default function World3DExperience() {
   const flyToStation = (idx, customDur = null) => {
     playSoftTapSound();
     setActiveStationIndex(idx);
-    if (idx !== 5) setIsLookingAtSky(false);
+    if (idx !== 5) {
+      setIsLookingAtSky(false);
+      setIsFireworksReplaying(false);
+      if (replayFireworksTimerRef.current) clearTimeout(replayFireworksTimerRef.current);
+    }
     const cam = cameraRef.current;
     const ctrl = controlsRef.current;
     if (!cam || !ctrl || !transRef.current) return;
@@ -946,48 +953,115 @@ export default function World3DExperience() {
     showToast('🎯 Đã đặt lại góc nhìn mặc định của trạm!');
   };
 
-  const toggleCastleView = () => {
-    playSoftTapSound();
+  const lowerCastleCamera = (silent = false) => {
     const cam = cameraRef.current;
     const ctrl = controlsRef.current;
     if (!cam || !ctrl || !transRef.current) return;
     const st5 = transRef.current.stationsPos[5];
     if (!st5) return;
 
-    if (isLookingAtSky) {
-      // Hạ góc nhìn xuống bàn tiệc hoàng gia
-      transRef.current.active = true;
-      transRef.current.t0 = performance.now();
-      transRef.current.dur = 1600;
-      transRef.current.fromCam = cam.position.clone();
-      transRef.current.toCam = st5.camPos.clone();
-      transRef.current.fromTgt = ctrl.target.clone();
-      transRef.current.toTgt = st5.targetPos.clone();
-      transRef.current.isVanRelative = false;
-      setIsLookingAtSky(false);
-      showToast('🍽️ Đã hạ góc nhìn xuống Bàn Tiệc Hoàng Gia & Hòm Quà 20/10');
-    } else {
-      // Ngước lên bầu trời ngắm pháo hoa — Góc nhìn điện ảnh góc thấp & lùi xa để bao trọn 3 tầng pháo hoa
-      const stCam = st5.camPos.clone();
-      const stTgt = st5.targetPos.clone();
-      const fwd = stTgt.clone().sub(stCam);
-      fwd.y = 0;
-      fwd.normalize();
-      const camToPos = stCam.clone().sub(fwd.clone().multiplyScalar(11.0)).add(new THREE.Vector3(0, -2.6, 0));
-      const camToTarget = stTgt.clone().add(fwd.clone().multiplyScalar(4.0)).add(new THREE.Vector3(0, 32.0, 0));
+    transRef.current.active = true;
+    transRef.current.t0 = performance.now();
+    transRef.current.dur = 1600;
+    transRef.current.fromCam = cam.position.clone();
+    transRef.current.toCam = st5.camPos.clone();
+    transRef.current.fromTgt = ctrl.target.clone();
+    transRef.current.toTgt = st5.targetPos.clone();
+    transRef.current.isVanRelative = false;
+    setIsLookingAtSky(false);
+    if (!silent) showToast('🍽️ Đã hạ góc nhìn xuống Bàn Tiệc Hoàng Gia & Hòm Quà 20/10');
+  };
 
-      transRef.current.active = true;
-      transRef.current.t0 = performance.now();
-      transRef.current.dur = 1800;
-      transRef.current.fromCam = cam.position.clone();
-      transRef.current.toCam = camToPos;
-      transRef.current.fromTgt = ctrl.target.clone();
-      transRef.current.toTgt = camToTarget;
-      transRef.current.isVanRelative = false;
-      setIsLookingAtSky(true);
-      showToast('🎆 Ngước lên chiêm ngưỡng Bầu Trời Pháo Hoa 3D Đại Tiệc');
+  const lookAtCastleSky = (silent = false) => {
+    const cam = cameraRef.current;
+    const ctrl = controlsRef.current;
+    if (!cam || !ctrl || !transRef.current) return;
+    const st5 = transRef.current.stationsPos[5];
+    if (!st5) return;
+
+    const stCam = st5.camPos.clone();
+    const stTgt = st5.targetPos.clone();
+    const fwd = stTgt.clone().sub(stCam);
+    fwd.y = 0;
+    fwd.normalize();
+    const camToPos = stCam.clone().sub(fwd.clone().multiplyScalar(11.0)).add(new THREE.Vector3(0, -2.6, 0));
+    const camToTarget = stTgt.clone().add(fwd.clone().multiplyScalar(4.0)).add(new THREE.Vector3(0, 32.0, 0));
+
+    transRef.current.active = true;
+    transRef.current.t0 = performance.now();
+    transRef.current.dur = 1800;
+    transRef.current.fromCam = cam.position.clone();
+    transRef.current.toCam = camToPos;
+    transRef.current.fromTgt = ctrl.target.clone();
+    transRef.current.toTgt = camToTarget;
+    transRef.current.isVanRelative = false;
+    setIsLookingAtSky(true);
+    if (!silent) showToast('🎆 Ngước lên chiêm ngưỡng Bầu Trời Pháo Hoa 3D Đại Tiệc');
+  };
+
+  const toggleCastleView = () => {
+    playSoftTapSound();
+    if (isLookingAtSky) {
+      lowerCastleCamera();
+    } else {
+      lookAtCastleSky();
     }
   };
+
+  // Kích hoạt bắn lại pháo hoa chủ động
+  const handleReplayCastleFireworks = () => {
+    if (isFireworksReplaying) return;
+    setIsFireworksReplaying(true);
+    playSparkleSound();
+
+    // 1. Tự động chuyển Bầu Trời Dạ Tiệc Đêm
+    if (!nightModeRef.current) {
+      toggleNightMode();
+    }
+
+    // 2. Ngước nhìn bầu trời
+    lookAtCastleSky();
+
+    // 3. Kích hoạt pháo hoa 3D 3 giàn
+    if (typeof window.__triggerCastleFireworks === 'function') {
+      window.__triggerCastleFireworks();
+    }
+
+    // 4. Pháo giấy 2D phụ trợ
+    fireConfetti({
+      particleCount: 150,
+      spread: 130,
+      origin: { y: 0.55 },
+      colors: ['#F43F5E', '#FDA4AF', '#FCD34D', '#FFF1F2', '#BE123C', '#F59E0B']
+    });
+
+    showToast('🎆 Đang bắn lại đợt pháo hoa đại tiệc! Hãy thỏa thích quay phim & chiêm ngưỡng ✨');
+
+    // 5. Cooldown 18.5s cho đến khi toàn bộ pháo hoa và âm thanh dứt hẳn mới mở lại nút bắn
+    // KHÔNG tự động cưỡng bức hạ camera xuống — để người dùng tự do ngắm trời đêm, thích hạ thì bấm nút '⬇️ Hạ Xuống Bàn Tiệc'
+    if (replayFireworksTimerRef.current) clearTimeout(replayFireworksTimerRef.current);
+    replayFireworksTimerRef.current = setTimeout(() => {
+      setIsFireworksReplaying(false);
+      showToast('✨ Màn pháo hoa đã trọn vẹn! Bạn có thể chạm "⬇️ Hạ Xuống Bàn Tiệc" để nhận quà hoặc bắn lại tiếp');
+    }, 18500);
+  };
+
+  useEffect(() => {
+    window.__setCastleFireworksFired = setHasCastleFireworksFired;
+    window.__scheduleFireworksCooldown = () => {
+      setIsFireworksReplaying(true);
+      if (replayFireworksTimerRef.current) clearTimeout(replayFireworksTimerRef.current);
+      replayFireworksTimerRef.current = setTimeout(() => {
+        setIsFireworksReplaying(false);
+        showToast('✨ Màn pháo hoa đã trọn vẹn! Bạn có thể chạm "⬇️ Hạ Xuống Bàn Tiệc" để nhận quà hoặc bắn lại tiếp');
+      }, 18500);
+    };
+    return () => {
+      delete window.__setCastleFireworksFired;
+      delete window.__scheduleFireworksCooldown;
+      if (replayFireworksTimerRef.current) clearTimeout(replayFireworksTimerRef.current);
+    };
+  }, []);
 
   /* ================================================================== */
   /*  [P1] THREE.JS WORLD LIFECYCLE — BẮT ĐẦU useEffect chính           */
@@ -4171,6 +4245,10 @@ export default function World3DExperience() {
           cAnim.opened = true;
         }
 
+        if (typeof window.__setCastleFireworksFired === 'function') {
+          window.__setCastleFireworksFired(true);
+        }
+
         playSparkleSound();
         soundBoom(0.05, 0.9);
 
@@ -4215,7 +4293,13 @@ export default function World3DExperience() {
         // 3. BẮN PHÁO HOA 3D THẬT LÊN TRỜI
         triggerCastleFireworks();
 
-        showToast('🎆 Bầu trời pháo hoa 3D đại tiệc 20/10 đã bừng sáng! Bấm nút [Xem & Tải Thiệp 2X Retina] ở thanh đáy để nhận quà bất cứ lúc nào!');
+        showToast('🎆 Bầu trời pháo hoa 3D đại tiệc 20/10 đã bừng sáng!');
+
+        // 4. Bật cooldown chống spam bắn trong lúc loạt pháo đang diễn ra (18.5s)
+        // Không tự hạ camera — để người dùng thỏa thích ngắm pháo hoa và tự bấm '⬇️ Hạ Xuống Bàn Tiệc'
+        if (typeof window.__scheduleFireworksCooldown === 'function') {
+          window.__scheduleFireworksCooldown();
+        }
       };
 
       let cakeClicks = 0;
@@ -4905,6 +4989,7 @@ export default function World3DExperience() {
 
       // Gán lại biến cũ để nút click dùng bản mới
       triggerCastleFireworks = triggerCastleFireworks_Upgraded;
+      window.__triggerCastleFireworks = triggerCastleFireworks_Upgraded;
     }
 
     /* ================================================================== */
@@ -5772,6 +5857,7 @@ export default function World3DExperience() {
       cancelAnimationFrame(animId);
       fwTimers.forEach((t) => clearTimeout(t));
       if (vegTimer) clearTimeout(vegTimer);
+      delete window.__triggerCastleFireworks;
       window.removeEventListener('pointerdown', resumeAudio);
       window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', onPointerUp);
@@ -6219,19 +6305,53 @@ export default function World3DExperience() {
                 </button>
               )}
               {activeStationIndex === 5 && (
-                <button
-                  onClick={() => setActivePartyCardModal(true)}
-                  className="btn-rose"
-                  style={{
-                    background: 'linear-gradient(135deg, #D4AF37, #B48A27)',
-                    color: '#1E0F18',
-                    fontWeight: '800',
-                    border: '1.5px solid #FFF',
-                    boxShadow: '0 0 18px rgba(253, 230, 138, 0.6)'
-                  }}
-                >
-                  📜 Xem & Tải Thiệp 2X Retina
-                </button>
+                <>
+                  {hasCastleFireworksFired && (
+                    <button
+                      onClick={handleReplayCastleFireworks}
+                      disabled={isFireworksReplaying}
+                      className={`btn-rose ${isFireworksReplaying ? '' : 'pulse-guide-attention'}`}
+                      style={{
+                        background: isFireworksReplaying
+                          ? 'rgba(255, 255, 255, 0.16)'
+                          : 'linear-gradient(135deg, #BE123C, #8C2F4B)',
+                        color: '#FFF',
+                        fontWeight: '800',
+                        border: '1.5px solid var(--champagne-gold)',
+                        boxShadow: isFireworksReplaying ? 'none' : '0 0 18px rgba(190, 18, 60, 0.65)',
+                        opacity: isFireworksReplaying ? 0.75 : 1,
+                        cursor: isFireworksReplaying ? 'not-allowed' : 'pointer',
+                        padding: '12px 22px',
+                        fontSize: '0.94rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                      title="Bắn lại màn pháo hoa đại tiệc rực rỡ để quay phim hoặc chiêm ngưỡng lần nữa"
+                    >
+                      <span>{isFireworksReplaying ? '⏳ Đang Bắn Pháo Hoa...' : '🎆 Xem Lại Pháo Hoa'}</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      if (isLookingAtSky) {
+                        lowerCastleCamera(true);
+                      }
+                      setActivePartyCardModal(true);
+                    }}
+                    className="btn-rose"
+                    style={{
+                      background: 'linear-gradient(135deg, #D4AF37, #B48A27)',
+                      color: '#1E0F18',
+                      fontWeight: '800',
+                      border: '1.5px solid #FFF',
+                      boxShadow: '0 0 18px rgba(253, 230, 138, 0.6)'
+                    }}
+                  >
+                    📜 Xem & Tải Thiệp 2X Retina
+                  </button>
+                </>
               )}
 
               <button
