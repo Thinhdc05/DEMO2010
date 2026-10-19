@@ -8,7 +8,26 @@ const AppContext = createContext();
 export function AppProvider({ children, navigate }) {
   const [people, setPeople] = useState([]);
   const [wishes, setWishes] = useState([]);
-  const [selectedSister, setSelectedSister] = useState(null);
+  const [selectedSister, setSelectedSisterState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tribute_selected_sister');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const setSelectedSister = (sister) => {
+    setSelectedSisterState(sister);
+    try {
+      if (sister) {
+        localStorage.setItem('tribute_selected_sister', JSON.stringify(sister));
+      } else {
+        localStorage.removeItem('tribute_selected_sister');
+      }
+    } catch (e) {}
+  };
+
   const [openedBalloons, setOpenedBalloons] = useState(new Set());
   const [activeModalWish, setActiveModalWish] = useState(null);
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
@@ -72,6 +91,18 @@ export function AppProvider({ children, navigate }) {
         if (found) {
           setSelectedSister(found);
         }
+      } else {
+        setSelectedSisterState(prev => {
+          if (!prev || !prev.id) return prev;
+          const matched = peopleData.find(p => p.id === prev.id);
+          if (matched) {
+            try {
+              localStorage.setItem('tribute_selected_sister', JSON.stringify(matched));
+            } catch (e) {}
+            return matched;
+          }
+          return prev;
+        });
       }
       const modeParam = (params.get('mode') || '').toLowerCase().trim();
       if (modeParam === '2d' || modeParam === '3d') {
