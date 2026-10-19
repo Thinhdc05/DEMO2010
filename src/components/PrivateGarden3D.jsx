@@ -396,6 +396,7 @@ function PrivateGarden3D() {
     renderer.toneMappingExposure = 0.95;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.debug.checkShaderErrors = false;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();

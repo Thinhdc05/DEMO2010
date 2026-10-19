@@ -15,6 +15,7 @@ const mergeGeos = BufferGeometryUtils.mergeGeometries;
 import confetti from 'canvas-confetti';
 import { playPopSound, playLetterOpenSound, playTruckHonkSound, playSparkleSound, playSoftTapSound } from '../utils/soundEffects.js';
 import { createSignatureCardCanvas } from '../components/signatureCardUtils.js';
+import CardStudio from '../components/CardStudio.jsx';
 
 // [TỐI ƯU CONFETTI] Tự động giảm hạt trên thiết bị di động & tôn trọng prefers-reduced-motion
 const isMobileDevice = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -1008,6 +1009,7 @@ export default function World3DExperience() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.info.autoReset = false;
+    renderer.debug.checkShaderErrors = false;
     container.appendChild(renderer.domElement);
     worldAtmosphereRef.current.renderer = renderer;
 
@@ -6172,130 +6174,39 @@ export default function World3DExperience() {
 
       {activePartyCardModal && (
         <div className="modal-overlay open" onClick={() => setActivePartyCardModal(false)}>
-          <div className="party-honor-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px', width: '100%', padding: '36px 32px', position: 'relative' }}>
+          <div className="party-honor-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '720px', width: '100%', maxHeight: '92vh', overflowY: 'auto', padding: '28px 20px', position: 'relative' }}>
             <div className="modal-wax-seal-badge">20.10</div>
-            <div
-              ref={printableCardRef}
-              style={{
-                background: 'linear-gradient(135deg, #FFFDF9 0%, #FAF3EA 100%)',
-                border: '3px solid #C9A66B',
-                borderRadius: '24px',
-                padding: '32px 28px',
-                boxShadow: '0 20px 50px rgba(140, 47, 75, 0.15)',
-                position: 'relative'
-              }}
-            >
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '2.8rem' }}>💐</span>
-                <span
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.82rem',
-                    color: 'var(--rose-600)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.15em',
-                    fontWeight: '700',
-                    margin: '6px 0'
-                  }}
-                >
-                  TechCorp Celebration • 20.10 Invitation
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', paddingBottom: '10px', borderBottom: '1px solid rgba(201,166,107,0.3)' }}>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: '#BE123C', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  GRAND FINALE • TRẠM LÂU ĐÀI 3D
                 </span>
-
-                <h2
-                  style={{
-                    fontFamily: 'var(--font-serif)',
-                    color: 'var(--rose-900)',
-                    fontSize: 'clamp(1.6rem, 3.5vw, 2.1rem)',
-                    margin: '6px 0 14px',
-                    fontStyle: 'italic'
-                  }}
-                >
-                  Tiệc Mừng 20/10 & Trao Quà Tri Ân
-                </h2>
-
-                <div
-                  style={{
-                    background: 'rgba(244, 63, 94, 0.05)',
-                    border: '1.5px dashed var(--rose-300)',
-                    borderRadius: '16px',
-                    padding: '16px 20px',
-                    margin: '18px 0',
-                    textAlign: 'left'
-                  }}
-                >
-                  <p style={{ margin: '0 0 10px', fontSize: '1.05rem', color: '#881337', fontStyle: 'italic', fontWeight: '600', lineHeight: '1.75' }}>
-                    “{cardWish.highlight || cardWish}”
-                  </p>
-                  <p style={{ margin: '0 0 12px', fontSize: '0.94rem', color: '#334155', lineHeight: '1.7' }}>
-                    {cardWish.message || 'Cảm ơn bạn vì sự nhiệt tình, những nỗ lực và nguồn năng lượng tích cực mà bạn mang đến cho mọi người. Chúc bạn luôn xinh đẹp, hạnh phúc và luôn tỏa sáng theo cách riêng của mình!'}
-                  </p>
-                  <p style={{ margin: 0, fontSize: '0.92rem', color: '#64748B', lineHeight: '1.65', borderTop: '1px dashed rgba(201, 166, 107, 0.4)', paddingTop: '10px' }}>
-                    📍 <strong>Địa điểm nhận quà:</strong> Khu Vực Pantry Tầng 8 • ⏰ <strong>Thời gian:</strong> 10:00 Sáng 20/10<br />
-                    🎁 <strong>Phần quà:</strong> Hoa tươi thắm, thiệp kỷ niệm & tiệc trà ngọt ngào chào đón bạn!
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E5C388', paddingTop: '14px', marginTop: '16px' }}>
-                  <div style={{ textAlign: 'left' }}>
-                    <span style={{ fontSize: '0.78rem', color: '#64748B' }}>Trao tặng từ:</span>
-                    <strong style={{ display: 'block', fontFamily: 'var(--font-serif)', color: 'var(--rose-900)', fontSize: '0.98rem' }}>
-                      Toàn Thể Anh Em TechCorp ❤️
-                    </strong>
-                  </div>
-                  <div
-                    style={{
-                      background: '#BE123C',
-                      color: '#FFF',
-                      padding: '4px 14px',
-                      borderRadius: '9999px',
-                      fontSize: '0.78rem',
-                      fontWeight: '700',
-                      border: '1px solid #FDE68A'
-                    }}
-                  >
-                    CHỨNG NHẬN 20.10
-                  </div>
-                </div>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem', color: 'var(--rose-900)', margin: '4px 0 0', fontWeight: '700' }}>
+                  Studio Khắc Thiệp Tri Ân 20/10
+                </h3>
               </div>
+              <button onClick={() => setActivePartyCardModal(false)} className="royal-btn-close" style={{ position: 'static' }}>
+                ✕
+              </button>
             </div>
 
-            <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
-              <button
-                onClick={downloadRetinaCard}
-                disabled={isDownloadingCard}
-                className="btn-rose"
-                style={{
-                  padding: '12px 26px',
-                  background: 'linear-gradient(135deg, #BE123C 0%, #8C2F4B 100%)',
-                  boxShadow: '0 8px 24px rgba(190, 18, 60, 0.35)'
-                }}
-              >
-                <span>{isDownloadingCard ? '⏳ Đang xuất thiệp 2x...' : '📥 Tải Thiệp Kỷ Niệm 2x Retina'}</span>
-              </button>
+            <p style={{ margin: '0 0 16px', fontSize: '0.94rem', color: '#881337', fontStyle: 'italic', textAlign: 'center' }}>
+              🎁 Những đóa hoa tươi thắm và món quà kỷ niệm đang chờ đón bạn ngoài đời thực!
+            </p>
 
-              <button
-                onClick={() => {
-                  const shareText = `🌸 Chúc mừng ngày Phụ Nữ Việt Nam 20/10! Thân gửi chị ${sisterName || 'Đồng Nghiệp'} tấm thiệp tri ân đặc biệt từ TechCorp ❤️ Xem ngay tại: ${window.location.origin}/#/3d`;
-                  navigator.clipboard.writeText(shareText);
-                  showToast('📋 Đã sao chép thiệp mừng & link! Bạn có thể dán ngay vào Zalo/Teams để chia sẻ.');
-                }}
-                className="btn-rose"
-                style={{
-                  padding: '12px 22px',
-                  background: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
-                  boxShadow: '0 8px 24px rgba(2, 132, 199, 0.35)'
-                }}
-              >
-                <span>🔗 Sao Chép Thiệp & Link (Zalo/Teams)</span>
-              </button>
+            <CardStudio
+              defaultName={selectedSister ? `Chị ${selectedSister.name}` : 'Chị Em Thân Thương'}
+              defaultSender="Toàn thể anh em công ty kính chúc 💐"
+            />
 
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
               <button
                 onClick={() => setActivePartyCardModal(false)}
                 className="btn-rose"
-                style={{ padding: '12px 24px', background: '#FFF', color: 'var(--rose-800)', border: '1.5px solid var(--rose-300)' }}
+                style={{ padding: '10px 24px', background: '#FFF', color: 'var(--rose-800)', border: '1.5px solid var(--rose-300)' }}
               >
-                <span>🌿 Đóng & Tiếp Tục Thưởng Thức</span>
+                <span>🌿 Đóng &amp; Tiếp Tục Thưởng Thức Thế Giới 3D</span>
               </button>
             </div>
           </div>
