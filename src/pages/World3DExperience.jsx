@@ -339,6 +339,7 @@ export default function World3DExperience() {
       icon: "👑",
       duration: "0:10",
       src: "/videochucmung.mp4",
+      poster: "/thumbnails/thumb_fe.jpg",
       desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
     },
     {
@@ -348,6 +349,7 @@ export default function World3DExperience() {
       icon: "🐜",
       duration: "0:10",
       src: "/videchucmungSon.mp4",
+      poster: "/thumbnails/thumb_son.jpg",
       desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
     },
     {
@@ -357,6 +359,7 @@ export default function World3DExperience() {
       icon: "🛡️",
       duration: "0:10",
       src: "/videochucmungSonb.mp4",
+      poster: "/thumbnails/thumb_sonb.jpg",
       desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Boy phố) gửi tặng phái đẹp công ty."
     },
     {
@@ -366,6 +369,7 @@ export default function World3DExperience() {
       icon: "⚔️",
       duration: "0:10",
       src: "/videochucmungHoang.mp4",
+      poster: "/thumbnails/thumb_hoang.jpg",
       desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Lính) gửi tặng các chị em."
     },
     {
@@ -375,6 +379,7 @@ export default function World3DExperience() {
       icon: "🍳",
       duration: "0:10",
       src: "/videochucmungHuy.mp4",
+      poster: "/thumbnails/thumb_huy.jpg",
       desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
     },
     {
@@ -384,6 +389,7 @@ export default function World3DExperience() {
       icon: "🎯",
       duration: "0:10",
       src: "/videochucmungViet.mp4",
+      poster: "/thumbnails/thumb_viet.jpg",
       desc: "Lời chúc ấm áp, khéo léo và chân thành từ Việt (Bá khéo) gửi tặng các chị em."
     },
     {
@@ -393,6 +399,7 @@ export default function World3DExperience() {
       icon: "🎶",
       duration: "0:10",
       src: "/videochucmung3.mp4",
+      poster: "/thumbnails/thumb_tamca.jpg",
       desc: "Giai điệu đồng ca chúc mừng 20/10 ngập tràn niềm vui và gắn kết từ toàn thể anh em."
     },
     {
@@ -402,6 +409,7 @@ export default function World3DExperience() {
       icon: "🌟",
       duration: "0:10",
       src: "/videochucmungVietAnh.mp4",
+      poster: "/thumbnails/thumb_vanh.jpg",
       desc: "Lời chúc mừng 20/10 ngập tràn năng lượng tươi vui và chân thành từ Việt Anh (Vanh)."
     }
   ];
@@ -6687,12 +6695,13 @@ export default function World3DExperience() {
             <div className="cinema-screen-viewport" style={{ aspectRatio: '16/9', width: '100%', borderRadius: '18px', overflow: 'hidden', background: '#000', border: '1.5px solid var(--champagne-gold)', boxShadow: '0 12px 35px rgba(0,0,0,0.6)' }}>
               <video
                 ref={video3DPlayerRef}
-                key={videoPlaylist[selected3DVideoIndex].src + selected3DVideoIndex}
+                key={videoPlaylist[selected3DVideoIndex].src}
                 src={videoPlaylist[selected3DVideoIndex].src}
+                poster={videoPlaylist[selected3DVideoIndex].poster}
                 controls
                 autoPlay
                 playsInline
-                preload="metadata"
+                preload="auto"
                 onEnded={() => {
                   if (is3DVideoAutoNext) {
                     const nextIdx = (selected3DVideoIndex + 1) % videoPlaylist.length;
@@ -6764,12 +6773,11 @@ export default function World3DExperience() {
                       }}
                     >
                       <div style={{ width: '100%', aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden', background: '#000', position: 'relative', marginBottom: '6px' }}>
-                        <video
-                          src={`${v.src}#t=0.5`}
-                          preload="metadata"
-                          muted
-                          playsInline
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.88, pointerEvents: 'none' }}
+                        <img
+                          src={v.poster}
+                          alt={v.tag}
+                          loading="lazy"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.95 }}
                         />
                         {isCur && (
                           <div style={{ position: 'absolute', top: '4px', left: '4px', background: 'var(--rose-600)', color: '#FFF', fontSize: '0.62rem', fontWeight: '800', padding: '2px 6px', borderRadius: '9999px' }}>

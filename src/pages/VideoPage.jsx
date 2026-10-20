@@ -13,6 +13,7 @@ export default function VideoPage() {
       icon: "👑",
       duration: "0:10",
       src: "/videochucmung.mp4",
+      poster: "/thumbnails/thumb_fe.jpg",
       desc: "Thông điệp chúc mừng 20/10 ngọt ngào, ấm áp và trân trọng nhất từ Leader FE."
     },
     {
@@ -22,6 +23,7 @@ export default function VideoPage() {
       icon: "🐜",
       duration: "0:10",
       src: "/videchucmungSon.mp4",
+      poster: "/thumbnails/thumb_son.jpg",
       desc: "Clip chúc mừng hóm hỉnh, vui tươi và tràn đầy năng lượng tích cực từ Sơn (Râu con kiến)."
     },
     {
@@ -31,6 +33,7 @@ export default function VideoPage() {
       icon: "🛡️",
       duration: "0:10",
       src: "/videochucmungSonb.mp4",
+      poster: "/thumbnails/thumb_sonb.jpg",
       desc: "Lời nhắn gửi chân thành, vững chãi từ Sơn B (Boy phố) gửi tặng phái đẹp công ty."
     },
     {
@@ -40,6 +43,7 @@ export default function VideoPage() {
       icon: "⚔️",
       duration: "0:10",
       src: "/videochucmungHoang.mp4",
+      poster: "/thumbnails/thumb_hoang.jpg",
       desc: "Lời chúc nhiệt huyết, hết mình và vui nhộn từ Hoàng (Chú Lính Chì) gửi tặng các chị em."
     },
     {
@@ -49,6 +53,7 @@ export default function VideoPage() {
       icon: "🍳",
       duration: "0:10",
       src: "/videochucmungHuy.mp4",
+      poster: "/thumbnails/thumb_huy.jpg",
       desc: "Hương vị ấm áp và sự chu đáo từ Huy (Food Reviewer) chúc mừng ngày Phụ nữ Việt Nam 20/10."
     },
     {
@@ -58,6 +63,7 @@ export default function VideoPage() {
       icon: "🎯",
       duration: "0:10",
       src: "/videochucmungViet.mp4",
+      poster: "/thumbnails/thumb_viet.jpg",
       desc: "Lời chúc ấm áp, khéo léo và chân thành từ Việt (Bá khéo) gửi tặng các chị em."
     },
     {
@@ -67,6 +73,7 @@ export default function VideoPage() {
       icon: "🎶",
       duration: "0:10",
       src: "/videochucmung3.mp4",
+      poster: "/thumbnails/thumb_tamca.jpg",
       desc: "Giai điệu đồng ca chúc mừng 20/10 ngập tràn niềm vui và gắn kết từ toàn thể anh em."
     },
     {
@@ -76,6 +83,7 @@ export default function VideoPage() {
       icon: "🌟",
       duration: "0:10",
       src: "/videochucmungVietAnh.mp4",
+      poster: "/thumbnails/thumb_vanh.jpg",
       desc: "Lời chúc mừng 20/10 ngập tràn năng lượng tươi vui và chân thành từ Việt Anh (Vanh)."
     }
   ];
@@ -239,9 +247,10 @@ export default function VideoPage() {
               <div className="cinema-video-frame">
                 <video
                   ref={videoRef}
-                  key={activeVideo.src + selectedVideoIndex}
+                  key={activeVideo.src}
                   src={activeVideo.src}
-                  preload="metadata"
+                  poster={activeVideo.poster}
+                  preload="auto"
                   controls
                   autoPlay
                   playsInline
@@ -306,13 +315,11 @@ export default function VideoPage() {
                       onClick={() => handleSelectVideo(idx)}
                     >
                       <div className="card-thumbnail-box">
-                        <video
-                          src={`${video.src}#t=0.5`}
-                          preload="metadata"
-                          muted
-                          playsInline
+                        <img
+                          src={video.poster}
+                          alt={video.title}
                           className="card-thumbnail-img"
-                          style={{ pointerEvents: 'none' }}
+                          loading="lazy"
                         />
                         {isActive && (
                           <div className="card-playing-badge">
