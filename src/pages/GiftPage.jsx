@@ -234,7 +234,7 @@ export default function GiftPage() {
               Chào Mừng Chị <strong>{selectedSister.name}</strong>! 💖
             </h2>
             <p className="onboarding-desc">
-              Toàn thể anh em TechCorp đã chuẩn bị không gian tri ân riêng dành tặng chị. Chị muốn bắt đầu khám phá qua trải nghiệm nào?
+              Toàn thể anh em FE Team đã chuẩn bị không gian tri ân riêng dành tặng chị. Chị muốn bắt đầu khám phá qua trải nghiệm nào?
             </p>
 
             <div className="onboarding-choices">

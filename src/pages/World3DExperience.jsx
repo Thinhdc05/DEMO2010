@@ -3340,17 +3340,17 @@ export default function World3DExperience() {
       scG.fillStyle = '#FDA4AF';
       scG.font = 'bold 24px monospace';
       scG.textAlign = 'center';
-      scG.fillText('🎬 TECHCORP ROYAL CINEMA • 20/10 SPECIAL', 512, 75);
+      scG.fillText('🎬 FE TEAM ROYAL CINEMA • 20/10 SPECIAL', 512, 75);
 
       // Title
       scG.fillStyle = '#FAF3EA';
       scG.font = 'italic bold 44px "Playfair Display", Georgia, serif';
-      scG.fillText('Tuyển Tập 5 Thước Phim Tri Ân Phái Đẹp', 512, 140);
+      scG.fillText('Tuyển Tập Thước Phim Tri Ân Phái Đẹp', 512, 140);
 
       // Subtitle
       scG.fillStyle = '#FDE68A';
       scG.font = '600 22px "Be Vietnam Pro", sans-serif';
-      scG.fillText('Các clip tri ân chân thành từ tập thể anh em công ty:', 512, 185);
+      scG.fillText('Các clip tri ân chân thành từ tập thể anh em FE Team:', 512, 185);
 
       // 5 Video Options Pills on 3D canvas
       const pillData = [
@@ -3440,10 +3440,10 @@ export default function World3DExperience() {
       signG.fillStyle = '#FDE68A';
       signG.font = 'bold 26px "Playfair Display", Georgia, serif';
       signG.textAlign = 'center';
-      signG.fillText('✨ RẠP CHIẾU 5 VIDEO TRI ÂN ✨', 256, 52);
+      signG.fillText('✨ RẠP CHIẾU VIDEO TRI ÂN ✨', 256, 52);
       signG.fillStyle = '#FDA4AF';
       signG.font = 'bold 18px monospace';
-      signG.fillText('TECHCORP GALA • 20.10', 256, 90);
+      signG.fillText('FE TEAM GALA • 20.10', 256, 90);
 
       const signTex = new THREE.CanvasTexture(signCanvas);
       signTex.colorSpace = THREE.SRGBColorSpace;
@@ -4241,7 +4241,7 @@ export default function World3DExperience() {
       cG.fillText(`Đóa Hoa Rực Rỡ • ${sisterName}`, 256, 52);
       cG.fillStyle = '#6B4226';
       cG.font = '600 16px "Be Vietnam Pro", sans-serif';
-      cG.fillText('TECHCORP GALA TRIBUTE 20.10', 256, 88);
+      cG.fillText('FE TEAM GALA TRIBUTE 20.10', 256, 88);
       const captionTex = new THREE.CanvasTexture(captionCanvas);
       captionTex.colorSpace = THREE.SRGBColorSpace;
       const capMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 0.42), new THREE.MeshBasicMaterial({ map: captionTex }));
@@ -4441,7 +4441,7 @@ export default function World3DExperience() {
           particleCount: 110, spread: 110, origin: { y: 0.52 },
           colors: ['#F59E0B', '#FDE68A', '#FFFFFF', '#BE123C']
         });
-        showToast('🥂 Nâng ly Champagne hảo hạng chúc mừng phái đẹp TechCorp ngày 20/10!');
+        showToast('🥂 Nâng ly Champagne hảo hạng chúc mừng các chị em ngày 20/10 từ anh em FE Team!');
       };
 
       const onEaselClick = () => {

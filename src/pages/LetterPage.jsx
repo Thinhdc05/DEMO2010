@@ -12,7 +12,7 @@ export default function LetterPage() {
 
   // Thông tin chị em được vinh danh (ưu tiên dữ liệu từ context)
   const sisterName = selectedSister ? selectedSister.name : 'Bạn';
-  const roleText = (selectedSister && (selectedSister.role || selectedSister.dept)) || 'PHÁI ĐẸP TECHCORP';
+  const roleText = (selectedSister && (selectedSister.role || selectedSister.dept)) || 'ĐÓA HOA RẠNG RỠ 20/10';
   
   // Kiểm tra ảnh chân dung: Nếu có ảnh & consent & không lỗi -> dùng ảnh thật; Nếu thiếu -> fallback thẻ chữ ký nghệ thuật!
   const hasExplicitPhoto = Boolean(selectedSister && selectedSister.photo && selectedSister.has_consent !== false);
@@ -41,7 +41,7 @@ export default function LetterPage() {
             <div className="page-inner-content">
               {/* Dải danh xưng kiêu sa trên đầu trang */}
               <div className="muse-crown-ribbon">
-                👑 NÀNG THƠ TECHCORP
+                👑 NÀNG THƠ TRONG MẮT ANH EM FE TEAM
               </div>
 
               {/* KHUNG ẢNH CHÂN DUNG BỌC GIÀN HOA BOTANICAL UỐN LƯỢN */}
@@ -106,7 +106,7 @@ export default function LetterPage() {
               {/* Dòng đề mục nhỏ */}
               <div className="letter-eyebrow-accent">
                 <span className="eyebrow-dash"></span>
-                <span>THƯ TRI ÂN CHUNG TỪ CÁNH NAM IT</span>
+                <span>THƯ TRI ÂN TỪ ANH EM FE TEAM</span>
                 <span className="eyebrow-dash"></span>
               </div>
 
@@ -132,7 +132,7 @@ export default function LetterPage() {
                   Chúc bạn mãi tự tin và toả sáng! 💐
                 </div>
                 <div className="letter-gentlemen-sign">
-                  — Toàn thể anh em Tech &amp; Product
+                  — Toàn thể anh em FE Team
                 </div>
               </div>
 

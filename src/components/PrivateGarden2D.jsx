@@ -86,7 +86,7 @@ export default function PrivateGarden2D() {
         <p className="garden-2d-sub">
           Chuyến xe hoa hoàng gia chở đầy hoa hồng nhung và bưu kiện tình cảm đang dừng tại Vọng Lâu để trao tận tay{' '}
           <strong className="garden-sister-highlight">{sisterName}</strong>{' '}
-          những cánh thư tri ân và trái tim ấm áp từ anh em TechCorp!
+          những cánh thư tri ân và trái tim ấm áp từ anh em FE Team!
         </p>
 
         {/* Chuyển đổi chế độ Demo 2D <-> 3D */}
@@ -112,7 +112,7 @@ export default function PrivateGarden2D() {
           <div className="diorama-top-bar">
             <div className="station-badge">
               <span className="station-dot"></span>
-              <span className="station-title">Trạm Dừng: TechCorp 20.10 Floral Pavilion</span>
+              <span className="station-title">Trạm Dừng: FE Team 20.10 Floral Pavilion</span>
             </div>
 
             <button onClick={handleOpenChest} className="btn-station-truck" title="Mở kho bưu kiện thư 20.10">
@@ -181,7 +181,7 @@ export default function PrivateGarden2D() {
 
                   {/* Biển hiệu đồng mạ vàng bên sườn xe */}
                   <rect x="32" y="58" width="96" height="22" rx="6" fill="#8C2F4B" stroke="#E5C388" strokeWidth="1.2" />
-                  <text x="80" y="69" fontFamily="'Playfair Display', serif" fontSize="7" fontWeight="bold" fill="#FFFBEB" textAnchor="middle" letterSpacing="0.8">TECHCORP COURIER</text>
+                  <text x="80" y="69" fontFamily="'Playfair Display', serif" fontSize="7" fontWeight="bold" fill="#FFFBEB" textAnchor="middle" letterSpacing="0.8">FE TEAM COURIER</text>
                   <text x="80" y="76.5" fontFamily="'Be Vietnam Pro', sans-serif" fontSize="5.2" fontWeight="bold" fill="#FDE68A" textAnchor="middle" letterSpacing="0.5">💌 CHUYẾN XE 20/10 💌</text>
 
                   {/* HỘP BƯU PHẨM & PHONG THƯ CỘT DÂY LỤA TRÊN THÙNG XE */}

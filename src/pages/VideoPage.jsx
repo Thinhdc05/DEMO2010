@@ -94,28 +94,28 @@ export default function VideoPage() {
       category: "DÀNH TẶNG NỤ CƯỜI TỎA NẮNG",
       icon: "✨",
       text: "“Cảm ơn vì đã luôn làm cho công ty này rực rỡ, vui tươi và tràn ngập năng lượng tích cực mỗi ngày!”",
-      author: "Toàn thể Anh Em Tech & Product Team",
-      badge: "Tech & Product Family"
+      author: "Toàn thể Anh Em FE Team",
+      badge: "FE Team Family"
     },
     {
       category: "TRI ÂN SỰ ĐỒNG HÀNH TRONG TỪNG SPRINT",
       icon: "🚀",
       text: "“Mọi sprint release cam go, mọi đêm OT dự án đều trở nên êm đềm và đáng nhớ hơn nhờ nụ cười, sự thấu cảm và kiên trì của các chị em!”",
-      author: "Engineering & QA Family",
-      badge: "Dev & QA Brothers"
+      author: "Anh Em FE Team",
+      badge: "FE Brothers"
     },
     {
       category: "VINH DANH NHỮNG ĐÓA HOA XUẤT CHÚNG",
       icon: "👑",
-      text: "“Chúc các đóa hoa IT luôn tự tin, kiên cường, hạnh phúc và mãi là phiên bản tài năng, rực rỡ nhất trong cuộc sống!”",
-      author: "From Brothers with Sincere Respect",
+      text: "“Chúc các đóa hoa luôn tự tin, kiên cường, hạnh phúc và mãi là phiên bản tài năng, rực rỡ nhất trong cuộc sống!”",
+      author: "From FE Brothers with Sincere Respect",
       badge: "With Love & Honor"
     },
     {
       category: "LỜI CHÚC TỪ TRÁI TIM",
       icon: "🌸",
       text: "“Mỗi dòng code chúng mình viết ra có thể chứa bug, nhưng sự trân trọng và biết ơn dành cho các chị em thì luôn hoàn hảo 100%!”",
-      author: "Frontend, Backend & DevOps Club",
+      author: "Frontend Brothers Club",
       badge: "Code with Love"
     }
   ];

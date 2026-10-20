@@ -410,7 +410,7 @@ function TributePavilion({ x, y, s, sisterName }) {
 
         {/* Dòng tri ân thanh lịch */}
         <text x="0" y="31" fontFamily="'Be Vietnam Pro', sans-serif" fontSize="5.2" fontWeight="600" fill="#FECDD3" textAnchor="middle" fontStyle="italic">
-          Bông Hoa Rạng Rỡ TechCorp 🌹
+          Bông Hoa Rạng Rỡ 20/10 🌹
         </text>
 
         {/* Cụm hoa hồng botanical lớn gắn góc khung tranh */}
