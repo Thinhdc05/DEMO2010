@@ -394,6 +394,15 @@ export default function World3DExperience() {
       duration: "0:10",
       src: "/videochucmung3.mp4",
       desc: "Giai điệu đồng ca chúc mừng 20/10 ngập tràn niềm vui và gắn kết từ toàn thể anh em."
+    },
+    {
+      id: 8,
+      title: "Lời Chúc: Vanh",
+      tag: "Vanh",
+      icon: "🌟",
+      duration: "0:10",
+      src: "/videochucmungVietAnh.mp4",
+      desc: "Lời chúc mừng 20/10 ngập tràn năng lượng tươi vui và chân thành từ Việt Anh (Vanh)."
     }
   ];
   const [selected3DVideoIndex, setSelected3DVideoIndex] = useState(0);

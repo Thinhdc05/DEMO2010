@@ -60,95 +60,32 @@ export function normalizePhotoUrl(url) {
 }
 
 /**
- * 2. Lấy danh sách chị em (hỗ trợ cả offline data và online Google Sheet)
+ * 2. Lấy danh sách chị em (Ưu tiên nạp tức thì từ dữ liệu nướng sẵn trong Project)
  */
 export async function fetchPeople() {
-  const cacheKey = "tribute_people_cache";
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
-
-  if (!APPS_SCRIPT_URL) {
-    return sistersData.map(p => ({
-      ...p,
-      photo: normalizePhotoUrl(p.photo)
-    }));
-  }
-
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
-
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=people`, {
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-      const sanitizedPeople = data.data.map(p => ({
-        ...p,
-        photo: normalizePhotoUrl(p.photo)
-      }));
-      setCache(cacheKey, sanitizedPeople);
-      return sanitizedPeople;
-    }
-    return sistersData.map(p => ({
-      ...p,
-      photo: normalizePhotoUrl(p.photo)
-    }));
-  } catch (err) {
-    console.warn("[API] fetchPeople dùng local data:", err.message);
-    return sistersData.map(p => ({
-      ...p,
-      photo: normalizePhotoUrl(p.photo)
-    }));
-  }
+  // Trả về tức thì dữ liệu 23 chị em đã đồng bộ từ Sheet, không phụ thuộc mạng, 0ms lag
+  return sistersData.map(p => ({
+    ...p,
+    photo: normalizePhotoUrl(p.photo)
+  }));
 }
 
 /**
  * 3. Lấy danh sách lời chúc công khai (bóng bay & biển bảng)
  */
 export async function fetchPublicWishes() {
-  const cacheKey = "tribute_public_wishes_cache";
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
-
-  if (!APPS_SCRIPT_URL) {
-    return balloonWishesData;
-  }
-
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=public`, {
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-      const formatted = data.data.map((item, idx) => ({
-        id: item.id || idx + 1,
-        name: item.from_name || "Đồng nghiệp",
-        dept: "Công ty",
-        text: item.text,
-        color: item.color || "#C9A66B"
-      }));
-      setCache(cacheKey, formatted);
-      return formatted;
-    }
-    return balloonWishesData;
-  } catch (err) {
-    console.warn("[API] fetchPublicWishes dùng local data:", err.message);
-    return balloonWishesData;
-  }
+  // Trả về tức thì danh sách lời chúc đã kiểm duyệt và đồng bộ từ Sheet
+  return balloonWishesData.map((item, idx) => ({
+    id: item.id || idx + 1,
+    name: item.from_name || item.name || "Đồng nghiệp",
+    dept: item.dept || "Công ty",
+    text: item.text,
+    color: item.color || "#C9A66B"
+  }));
 }
 
 /**
- * 4. Lấy lời nhắn riêng tư (Không cần mã PIN)
+ * 4. Lấy lời nhắn riêng tư (Lấy trực tiếp từ 54 lời chúc đã nướng sẵn trong Project)
  */
 export async function fetchPrivateWishes(id, nameOrPin) {
   const cleanId = String(id || '').trim().toLowerCase();
@@ -156,100 +93,50 @@ export async function fetchPrivateWishes(id, nameOrPin) {
     ? nameOrPin.trim() 
     : '';
 
-  // 1. Tìm tên chị em trong cache hoặc file fallback
-  const cachedPeople = getCache("tribute_people_cache") || [];
-  const foundSister = (cleanId ? cachedPeople.find(p => String(p.id).toLowerCase() === cleanId) : null) 
-    || (cleanId ? sistersData.find(s => s.id === cleanId) : null);
+  // 1. Tìm thông tin chị em
+  const foundSister = cleanId 
+    ? sistersData.find(s => String(s.id || '').trim().toLowerCase() === cleanId)
+    : null;
 
   const fallbackName = overrideName 
     || (foundSister ? foundSister.name : null)
     || 'Bạn';
 
-  if (!APPS_SCRIPT_URL) {
-    // Lấy lời chúc riêng theo recipientId từ privateWishes.json
-    const sisterWishes = cleanId ? privateWishesData.filter(w => w.recipientId === cleanId) : [];
-    if (sisterWishes.length > 0) {
-      return {
-        success: true,
-        recipient_name: fallbackName,
-        data: sisterWishes
-      };
-    }
+  // 2. Lấy lời chúc riêng theo recipientId từ privateWishes.json
+  const sisterWishes = cleanId 
+    ? privateWishesData.filter(w => String(w.recipientId || '').trim().toLowerCase() === cleanId) 
+    : [];
 
-    // Nếu chị chưa có lời chúc riêng cụ thể trong file, tự sinh thư chúc ấm áp cá nhân hóa theo đúng tên
+  if (sisterWishes.length > 0) {
+    const recipientName = sisterWishes[0].recipient_name || fallbackName;
     return {
       success: true,
-      recipient_name: fallbackName,
-      data: [
-        {
-          id: 1,
-          type: "winged_letter",
-          badge: "🕊️ Cánh Thư Tri Ân",
-          from_name: "Anh em trong công ty",
-          text: `Cảm ơn ${fallbackName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc ${fallbackName} một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
-        },
-        {
-          id: 2,
-          type: "heart",
-          badge: "💖 Trái Tim Đồng Đội",
-          from_name: "Một người đồng nghiệp giấu tên",
-          text: `Chúc ${fallbackName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
-        }
-      ]
+      recipient_name: recipientName,
+      data: sisterWishes
     };
   }
 
-  try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=private&id=${encodeURIComponent(cleanId)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-      return data;
-    }
-
-    // Lấy tên chuẩn xác: ưu tiên tên trả về từ sheet people (data.recipient_name), sau đó là fallbackName
-    const realName = (data && data.recipient_name && data.recipient_name !== "Chị") 
-      ? data.recipient_name 
-      : fallbackName;
-
-    // Nếu chưa có lời chúc riêng gửi đích danh trong sheet, tự động sinh thư chúc ấm áp theo đúng tên người nhận
-    return {
-      success: true,
-      recipient_name: realName,
-      data: [
-        {
-          id: 1,
-          type: "winged_letter",
-          badge: "🕊️ Cánh Thư Tri Ân",
-          from_name: "Anh em trong công ty",
-          text: `Cảm ơn ${realName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc ${realName} một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
-        },
-        {
-          id: 2,
-          type: "heart",
-          badge: "💖 Trái Tim Đồng Đội",
-          from_name: "Đồng nghiệp thân thiết",
-          text: `Chúc ${realName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
-        }
-      ]
-    };
-  } catch (err) {
-    console.error("[API] fetchPrivateWishes error:", err);
-    const realName = fallbackName;
-    return {
-      success: true,
-      recipient_name: realName,
-      data: [
-        {
-          id: 1,
-          type: "winged_letter",
-          badge: "🕊️ Cánh Thư Tri Ân",
-          from_name: "Đồng nghiệp thân thiết",
-          text: `Chúc ${realName} một ngày 20/10 ngập tràn niềm vui, công việc thuận buồm xuôi gió và luôn tươi cười hạnh phúc!`
-        }
-      ]
-    };
-  }
+  // 3. Nếu chưa có lời chúc riêng ghi đích danh, tự sinh thư chúc ấm áp cá nhân hóa theo đúng tên người nhận
+  return {
+    success: true,
+    recipient_name: fallbackName,
+    data: [
+      {
+        id: 1,
+        type: "winged_letter",
+        badge: "🕊️ Cánh Thư Tri Ân",
+        from_name: "Anh em trong công ty",
+        text: `Cảm ơn ${fallbackName} đã luôn đồng hành, hỗ trợ và mang lại nguồn năng lượng tích cực cho toàn thể anh em. Chúc ${fallbackName} một ngày 20/10 ngập tràn niềm vui, hoa tươi và những điều ngọt ngào nhất!`
+      },
+      {
+        id: 2,
+        type: "heart",
+        badge: "💖 Trái Tim Đồng Đội",
+        from_name: "Một người đồng nghiệp giấu tên",
+        text: `Chúc ${fallbackName} ngày 20/10 luôn rạng rỡ, công việc hanh thông, vạn sự như ý và mãi là đóa hoa xinh đẹp của công ty!`
+      }
+    ]
+  };
 }
 
 /**

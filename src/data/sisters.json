@@ -56,14 +56,6 @@
     "has_consent": false
   },
   {
-    "id": "pnkx238",
-    "name": "Vương Ngọc Linh",
-    "dept": "",
-    "role": "",
-    "photo": "",
-    "has_consent": false
-  },
-  {
     "id": "pnkx275",
     "name": "Bùi Thị Hồng Hà",
     "dept": "",
@@ -178,6 +170,14 @@
   {
     "id": "pnkx178",
     "name": "Nguyễn Thị Vân Yến",
+    "dept": "",
+    "role": "",
+    "photo": "",
+    "has_consent": false
+  },
+  {
+    "id": "hđk214",
+    "name": "Trần Thúy Quỳnh",
     "dept": "",
     "role": "",
     "photo": "",

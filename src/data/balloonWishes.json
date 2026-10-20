@@ -1,50 +1,128 @@
 [
   {
     "id": 1,
-    "from_name": "Anh em Frontend & Mobile Team",
-    "text": "Chúc các chị em một ngày 20/10 ngập tràn niềm vui, nụ cười luôn nở trên môi và cuộc sống thảnh thơi an lành!",
-    "color": "#F43F5E"
+    "from_name": "Lê Quang Huy",
+    "name": "Lê Quang Huy",
+    "dept": "FE Dev",
+    "text": "Chúc toàn thể chị em ngày 20/10 ngập tràn niềm vui và tự hào. Cảm ơn các chị em đã luôn là nguồn năng lượng tích cực, sự cẩn trọng và bản lĩnh tuyệt vời trong từng dự án cùng công ty!",
+    "color": "#8C2F4B",
+    "timestamp": "2026-10-19T02:00:00.000Z"
   },
   {
     "id": 2,
-    "from_name": "Team Backend & DevOps",
-    "text": "Chúc các đóa hoa công nghệ của công ty luôn xinh đẹp, hạnh phúc, code chạy mượt mà và không bao giờ gặp bug!",
-    "color": "#C9A66B"
+    "from_name": "Lộc Quang Sơn",
+    "name": "Lộc Quang Sơn",
+    "dept": "FE Dev",
+    "text": "Nhân ngày 20/10, chúc phái đẹp công ty luôn giữ vững sự tự tin, sắc sảo và niềm đam mê với công việc. Sự đồng hành và đóng góp bền bỉ của các bạn luôn là điểm tựa vững chắc cho toàn đội ngũ!",
+    "color": "#C9A66B",
+    "timestamp": "2026-10-19T02:02:00.000Z"
   },
   {
     "id": 3,
-    "from_name": "Hội Anh Em AI & Data",
-    "text": "Cảm ơn sự dịu dàng và năng lượng tích cực của các chị em đã thắp sáng cả văn phòng mỗi ngày. Chúc 20/10 rực rỡ!",
-    "color": "#8C2F4B"
+    "from_name": "Đặng Anh Sơn",
+    "name": "Đặng Anh Sơn",
+    "dept": "FE Dev",
+    "text": "Cảm ơn các chị em vì đã luôn thấu hiểu, kiên nhẫn và mang đến góc nhìn tinh tế cho từng sản phẩm. Chúc tất cả chị em có một ngày 20/10 thật hạnh phúc, rạng rỡ và luôn thành công trong sự nghiệp!",
+    "color": "#E55B77",
+    "timestamp": "2026-10-19T02:05:00.000Z"
   },
   {
     "id": 4,
-    "from_name": "Đội Ngũ Product & Design",
-    "text": "Chúc phái đẹp công ty luôn tỏa sáng với vẻ đẹp tự tin, trí tuệ sắc sảo và luôn là nguồn cảm hứng bất tận!",
-    "color": "#F59E0B"
+    "from_name": "Trương Viết Tùng",
+    "name": "Trương Viết Tùng",
+    "dept": "FE Dev",
+    "text": "Chúc một nửa thế giới của đại gia đình chúng ta ngày 20/10 thật nhiều nụ cười và may mắn. Mong mọi áp lực công việc đều tan biến, chỉ còn lại sự trân trọng và những thành quả xứng đáng nhất!",
+    "color": "#3498DB",
+    "timestamp": "2026-10-19T02:08:00.000Z"
   },
   {
     "id": 5,
-    "from_name": "Một người đồng nghiệp giấu tên",
-    "text": "Chúc các chị em luôn nhận được thật nhiều hoa, nhiều quà và tình cảm chân thành nhất trong ngày đặc biệt này!",
-    "color": "#EC4899"
+    "from_name": "Nguyễn Việt Hoàng",
+    "name": "Nguyễn Việt Hoàng",
+    "dept": "FE Dev",
+    "text": "Gửi tới tất cả chị em ngàn lời tri ân sâu sắc nhất. Cảm ơn các bạn đã luôn tiếp thêm nguồn cảm hứng sáng tạo và sự tỉ mỉ để mọi sản phẩm của công ty trở nên hoàn hảo hơn mỗi ngày. Happy 20/10!",
+    "color": "#9B59B6",
+    "timestamp": "2026-10-19T02:10:00.000Z"
   },
   {
     "id": 6,
-    "from_name": "Tập thể Anh Em Công Ty",
-    "text": "Ngày nào ở công ty có các chị em cũng là ngày vui. Chúc các chị em luôn trẻ trung, yêu đời và hạnh phúc viên mãn!",
-    "color": "#BE123C"
+    "from_name": "Hoàng Kim Điệp",
+    "name": "Hoàng Kim Điệp",
+    "dept": "FE Dev",
+    "text": "Chúc các chị em luôn mạnh mẽ, kiên định và tỏa sáng theo cách riêng của mình. Sự hiện diện và đồng hành của mọi người là niềm vinh hạnh và tự hào to lớn của cánh anh em chúng tôi!",
+    "color": "#2ECC71",
+    "timestamp": "2026-10-19T02:12:00.000Z"
   },
   {
     "id": 7,
-    "from_name": "Team QA & Tester",
-    "text": "Chúc các chị em luôn giữ mãi nụ cười rạng ngời, việc gì khó cũng hóa dễ, luôn được yêu thương và chiều chuộng!",
-    "color": "#8B5CF6"
+    "from_name": "Nguyễn Đức Việt",
+    "name": "Nguyễn Đức Việt",
+    "dept": "FE Dev",
+    "text": "Chúc toàn thể phái nữ của công ty có một ngày 20/10 ngập tràn hoa, quà và những điều ngọt ngào nhất. Chúc các bạn luôn giữ trọn ngọn lửa nhiệt huyết và gặt hái thật nhiều cột mốc rực rỡ!",
+    "color": "#C9A66B",
+    "timestamp": "2026-10-19T02:15:00.000Z"
   },
   {
     "id": 8,
-    "from_name": "Anh Em Khối Kinh Doanh & Vận Hành",
-    "text": "Gửi ngàn đóa hoa và lời tri ân chân thành nhất đến các chị em - những đóa hồng rạng ngời nhất của công ty chúng ta!",
-    "color": "#10B981"
+    "from_name": "Nguyễn Minh Đạo",
+    "name": "Nguyễn Minh Đạo",
+    "dept": "FE Dev",
+    "text": "Ngày Phụ nữ Việt Nam 20/10, chúc các chị em luôn dồi dào sức khỏe, tràn đầy năng lượng tích cực và luôn cảm nhận được sự tôn trọng, yêu thương từ tất cả anh em đồng nghiệp mỗi ngày!",
+    "color": "#8C2F4B",
+    "timestamp": "2026-10-19T02:18:00.000Z"
+  },
+  {
+    "id": 9,
+    "from_name": "Đinh Khánh Duy",
+    "name": "Đinh Khánh Duy",
+    "dept": "FE Dev",
+    "text": "Chúc các chị em luôn rạng rỡ như những đóa hoa đẹp nhất, luôn tự tin vào giá trị và trí tuệ của chính mình. Cảm ơn vì đã luôn đồng hành và thắp sáng không khí làm việc của công ty!",
+    "color": "#E55B77",
+    "timestamp": "2026-10-19T02:20:00.000Z"
+  },
+  {
+    "id": 10,
+    "from_name": "Nguyễn Việt Hưng",
+    "name": "Nguyễn Việt Hưng",
+    "dept": "FE Dev",
+    "text": "Kính chúc toàn thể chị em ngày 20/10 thật nhiều ấm áp và niềm vui trọn vẹn bên gia đình, đồng nghiệp. Cảm ơn sự cống hiến hết mình và những nỗ lực thầm lặng của các bạn trong suốt chặng đường qua!",
+    "color": "#9B59B6",
+    "timestamp": "2026-10-19T02:22:00.000Z"
+  },
+  {
+    "id": 11,
+    "from_name": "Đặng",
+    "name": "Đặng",
+    "dept": "Engineering (Backend/Dev)",
+    "text": "Tháng mười hoa nở dịu dàng\nChị em tươi tắn, rộn ràng tiếng cười\nBên nhau ngày mới thêm tươi\nChung tay công việc, tình người mến thương\nGiỏi giang, vững bước trên đường\nĐồng lòng góp sức, yêu thương đong đầy\nChúc nhau hạnh phúc mỗi ngày\nNiềm vui ở lại, đong đầy ước mơ",
+    "color": "#8B5CF6",
+    "timestamp": "2026-10-19T02:27:13.172Z"
+  },
+  {
+    "id": 12,
+    "from_name": "Thịnh",
+    "name": "Thịnh",
+    "dept": "Engineering (Backend/Dev)",
+    "text": "Chúc các chị xinh đẹp,em yêu các chị",
+    "color": "#EC4899",
+    "timestamp": "2026-10-19T05:08:58.295Z"
+  },
+  {
+    "id": 13,
+    "from_name": "Việt Anh",
+    "name": "Việt Anh",
+    "dept": "FE Dev",
+    "text": "Chúc toàn thể chị em ngày 20/10 ngập tràn niềm vui, luôn rạng ngời, trẻ trung và thành công rực rỡ trong mọi dự án!",
+    "color": "#3498DB",
+    "timestamp": "2026-10-19T05:15:20.000Z"
+  },
+  {
+    "id": 14,
+    "from_name": "Bảo",
+    "name": "Bảo",
+    "dept": "FE Dev",
+    "text": "Chúc các chị em 20/10 luôn xinh tươi, hạnh phúc và dồi dào năng lượng tích cực. Cảm ơn mọi người đã luôn đồng hành cùng team!",
+    "color": "#E55B77",
+    "timestamp": "2026-10-19T05:18:45.000Z"
   }
 ]
